@@ -1,0 +1,8 @@
+{
+  "name": "ebury-games",
+  "version": "0.0.1",
+  "dependencies": {
+    "kineticjs": "latest",
+    "jquery":"latest"
+  }
+}
