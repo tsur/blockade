@@ -28,25 +28,33 @@ jQuery(document).ready(function(){
   // add the shape to the layer
   layers['bg'].add(rect);
 
-  var circles  = [
-      new Kinetic.Circle({x:150, y:160, radius: 90, fill:"rgba(197, 171, 224,.9)"}),
-      new Kinetic.Circle({x:67,  y:136, radius:34, fill:"rgba(177, 190, 229,.9)"}),
-      new Kinetic.Circle({x:106, y:74,  radius:22, fill:"rgba(137, 150, 224,.8)"}),
-      new Kinetic.Circle({x:114, y:52,  radius:10, fill:"rgba(177, 125, 221,.75)"}),
-      new Kinetic.Circle({x:220, y:82,  radius:56, fill:"rgba(177, 165, 224,.6)"}),
-      new Kinetic.Circle({x:250, y:138, radius:43, fill:"rgba(157, 170, 223,.9)"}),
-      new Kinetic.Circle({x:232, y:232, radius:25, fill:"rgba(157, 181, 224,.9)"}),
-      new Kinetic.Circle({x:256, y:222, radius:10, fill:"rgba(107, 212, 225,.7)"}),
-      new Kinetic.Circle({x:128, y:244, radius:36, fill:"rgba(107, 190, 225,.9)"}),
-      new Kinetic.Circle({x:64,  y:188, radius:10, fill:"rgba(107, 205, 226,.9)"})
+  var circlesList = new CircleList();
+
+  circlesList.circles = [
+      // x, y, radius, color
+      new Circle(150, 160, 90, "rgba(197, 171, 224,.9)"),
+      new Circle(67, 136, 34,  "rgba(177, 190, 229,.9)"),
+      new Circle(106, 74, 22,  "rgba(137, 150, 224,.8)"),
+      new Circle(114, 52, 10,  "rgba(177, 125, 221,.75)"),
+      new Circle(220, 82, 56,  "rgba(177, 165, 224,.6)"),
+      new Circle(250, 138, 43, "rgba(157, 170, 223,.9)"),
+      new Circle(232, 232, 25, "rgba(157, 181, 224,.9)"),
+      new Circle(256, 222, 10, "rgba(107, 212, 225,.7)"),
+      new Circle(128, 244, 36, "rgba(107, 190, 225,.9)"),
+      new Circle(64, 188, 10,  "rgba(107, 205, 226,.9)")
   ];
 
-  for(var i=0;i<circles.length;i++)
+  for(var i=0;i<circlesList['circles'].length;i++)
   {
-    layers['loading'].add(circles[i]);
+    layers['loading'].add(circlesList['circles'][i].kcircle);
   }
 
   var ebury_logo = new Image();
+
+  // variables accessible from within function(frame)
+  var frameCount = 0;
+  var currentSecond = 0;
+  var frameRate = 0;
 
   ebury_logo.onload = function() {
     
@@ -62,6 +70,28 @@ jQuery(document).ready(function(){
     layers['loading'].add(image);
     layers['loading'].draw();
 
+    var anim = new Kinetic.Animation(function(frame) {
+
+      // within function(frame), called with current time on each new frame
+      function updateFrameRate(time) {
+          var second = Math.floor(time / 1000); // ms to integer seconds
+          if (second != currentSecond) {
+             frameRate = frameCount;
+             frameCount = 0;
+             currentSecond = second;
+          }
+          frameCount ++;
+      }
+
+      //updateFrameRate(frame.time);
+      //console.log(frameRate);
+      layers['loading'].getCanvas().getContext().globalCompositeOperation = 'darker';
+      circlesList.update();
+
+    }, layers['loading']);
+
+    anim.start();
+
   };   
 
   ebury_logo.src = './snake/images/ebury_logo.png';
@@ -70,6 +100,84 @@ jQuery(document).ready(function(){
   {
     stage.add(layers[layer]);
   }
+
+  // data structures
+   function CircleList()
+   {
+      this.circles = [];
+      
+      this.update = function()
+      {
+         // special case for first blob - which is the main magenta disc
+         var circle = this.circles[0];
+         if (Math.random() > 0.99)
+         {
+            circle.velocity.z += (Math.random()*0.10 - 0.05);
+            circle.spring = 0.0125;
+         }
+         circle.update();
+         
+         // all the other blobs can animate based on mouse interaction
+         for (var i = 1,dx,dy,d; i < this.circles.length; i++)
+         {
+            circle = this.circles[i];
+            
+            // else based on a random chance, pulse the blob
+            if (Math.random() > 0.995)
+            {
+               circle.targetPos[0] = circle.origin[0];
+               circle.targetPos[1] = circle.origin[1];
+               circle.velocity[2] += (Math.random()*0.30 - 0.15);
+               circle.spring = 0.0125;
+            }
+            // else just animate towards the original position
+            else
+            {
+               circle.targetPos[0] = circle.origin[0];
+               circle.targetPos[1] = circle.origin[1];
+               circle.spring = 0.05;
+            }
+            
+            circle.update();
+         }
+      };
+   };
+   
+   function Circle(x, y, radius, colour)
+   {
+      this.kcircle = new Kinetic.Circle({x:x, y:y, radius: radius, fill:colour, stroke: 'rgb(191, 191, 191)', strokeWidth: 1});
+      this.origin = [x,y, 0];
+      this.position = [x,y, 0];
+      this.targetPos = [x,y, 0];
+      this.originradius = radius;
+      this.radius = radius;
+      this.velocity = [0,0, 0];
+      this.friction = 0.75;
+      this.spring = 0.05;
+      
+      this.update = function()
+      {
+         this.velocity[0] += (this.targetPos[0] - this.kcircle.x()) * this.spring;
+         this.velocity[0] *= this.friction;
+         this.kcircle.x(this.kcircle.x() + this.velocity[0]);
+         
+         this.velocity[1] += (this.targetPos[1] - this.kcircle.y()) * this.spring;
+         this.velocity[1] *= this.friction;
+         this.kcircle.x(this.kcircle.x() + this.velocity[1]);
+         
+         var dox = this.origin[0] - this.kcircle.x(),
+             doy = this.origin[1] - this.kcircle.y(),
+             d = Math.sqrt(dox * dox + doy * doy);
+         
+         this.targetPos[2] = d/150 + 1;
+         this.velocity[2] += (this.targetPos[2] - this.position[2]) * this.spring;
+         this.velocity[2] *= this.friction;
+         this.position[2] += this.velocity[2];
+         
+         this.kcircle.radius(this.originradius * this.position[2]);
+         if (this.kcircle.radius() < 1) this.kcircle.radius(1);
+      };
+   };
 
 
 
