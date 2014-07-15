@@ -10,7 +10,7 @@ jQuery(document).ready(function(){
   var layers = {'bg':new Kinetic.Layer(), 'loading':new Kinetic.Layer({x: (stage.getWidth()/2)-(320/2),
     y: (stage.getHeight()/2)-(285/2),
     width: 320,
-    height: 285})};
+    height: 285}), 'game':new Kinetic.Layer()};
 
   //Haces un rectangulo sobre lo que quieras centrar y luego calculas:
   // x: (stage.getWidth()/2)-(rect.getWidth()/2)
@@ -70,11 +70,9 @@ jQuery(document).ready(function(){
     layers['loading'].add(image);
     layers['loading'].draw();
 
-    var anim = new Kinetic.Animation(function(frame) {
-
-      // within function(frame), called with current time on each new frame
-      function updateFrameRate(time) {
+    function updateFrameRate(time) {
           var second = Math.floor(time / 1000); // ms to integer seconds
+          console.log(second, currentSecond)
           if (second != currentSecond) {
              frameRate = frameCount;
              frameCount = 0;
@@ -83,34 +81,119 @@ jQuery(document).ready(function(){
           frameCount ++;
       }
 
+
+    var anim = new Kinetic.Animation(function(frame) {
+
+      // within function(frame), called with current time on each new frame
+      
       //updateFrameRate(frame.time);
+
+      wait(500, frame.time, function(){
+          layers['loading'].getCanvas().getContext().globalCompositeOperation = 'darker';
+          circlesList.update();
+      });
       //console.log(frameRate);
-      layers['loading'].getCanvas().getContext().globalCompositeOperation = 'darker';
-      circlesList.update();
+
+      // layers['loading'].getCanvas().getContext().globalCompositeOperation = 'darker';
+      // circlesList.update();
 
     }, layers['loading']);
 
     anim.start();
 
+    stage.on('click.start touchstart.start', function(e){
+
+        stage.off('click.start touchstart.start');
+        anim.stop();
+
+        var tween = new Kinetic.Tween({
+            node: layers['loading'],
+            opacity: 0,
+            duration: 1,
+            onFinish: function(){
+                console.log('done!');
+                tween.destroy();
+                layers['loading'].destroy();
+                //Startgame
+                startGame();
+            }
+        }).play();
+    });
+
   };   
 
   ebury_logo.src = './snake/images/ebury_logo.png';
 
-  for(var layer in layers)
-  {
-    stage.add(layers[layer]);
+  stage.add(layers['bg']);
+  stage.add(layers['loading']);
+  // for(var layer in layers)
+  // {
+  //   stage.add(layers[layer]);
+  // }
+
+  function wait(seconds, time, callback) {
+      seconds = seconds || 1000;
+      var second = Math.floor(time / seconds);
+      if (second != currentSecond) 
+      {
+         callback();
+      }
   }
 
+  function startGame()
+  {
+    
+    var snake = new Player();
+
+    layers['game'].add(snake.actor);
+    stage.add(layers['game']);
+
+    stage.on('mousemove.game', function(data){
+
+        snake.targetPos.x = data.evt.clientX;
+        snake.targetPos.y = data.evt.clientY;
+    });
+
+    var anim = new Kinetic.Animation(function(frame) {
+
+       wait(500, frame.time, function(){
+          snake.update();
+      });
+       
+
+    }, layers['game']);
+
+    anim.start();
+  }
+  
+
+  function Player()
+  {
+    this.actor = new Kinetic.Circle({x:stage.getWidth()/2, y:stage.getHeight()/2, radius: 10, fill:'#000', stroke: 'rgb(191, 191, 191)', strokeWidth: 3});
+
+    this.targetPos = {x:stage.getWidth()/2, y:stage.getHeight()/2};
+    this.sprint = 0.05;
+    this.update = function()
+    {
+      var y = this.actor.y() + (this.targetPos.y - this.actor.y())*this.sprint;
+      var x = this.actor.x() + (this.targetPos.x - this.actor.x())*this.sprint;
+
+      this.actor.x(x);
+      this.actor.y(y);
+
+    }
+  };
+
   // data structures
-   function CircleList()
-   {
+  function CircleList()
+  {
       this.circles = [];
       
       this.update = function()
       {
          // special case for first blob - which is the main magenta disc
          var circle = this.circles[0];
-         if (Math.random() > 0.99)
+         if (Math.random() > 0.69)
          {
             circle.velocity.z += (Math.random()*0.10 - 0.05);
             circle.spring = 0.0125;
