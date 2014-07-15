@@ -145,7 +145,7 @@ jQuery(document).ready(function(){
     
     var snake = new Player();
 
-    layers['game'].add(snake.actor);
+    layers['game'].add(snake.actor[0]);
     stage.add(layers['game']);
 
     stage.on('mousemove.game', function(data){
@@ -159,7 +159,7 @@ jQuery(document).ready(function(){
        wait(500, frame.time, function(){
           snake.update();
       });
-       
+
 
     }, layers['game']);
 
@@ -169,17 +169,36 @@ jQuery(document).ready(function(){
 
   function Player()
   {
-    this.actor = new Kinetic.Circle({x:stage.getWidth()/2, y:stage.getHeight()/2, radius: 10, fill:'#000', stroke: 'rgb(191, 191, 191)', strokeWidth: 3});
+    this.actor = [new Kinetic.Circle({x:stage.getWidth()/2, y:stage.getHeight()/2, radius: 10, fill:'#000', stroke: 'rgb(191, 191, 191)', strokeWidth: 3})];
 
     this.targetPos = {x:stage.getWidth()/2, y:stage.getHeight()/2};
     this.sprint = 0.05;
     this.update = function()
     {
-      var y = this.actor.y() + (this.targetPos.y - this.actor.y())*this.sprint;
-      var x = this.actor.x() + (this.targetPos.x - this.actor.x())*this.sprint;
+      
+      for(var i=0; i<this.actor.length; i++)
+      {
+        var ty = this.targetPos.y - i*15;
+        var tx = this.targetPos.x - i*15;
+        var y = this.actor[i].y() + (ty - this.actor[i].y())*this.sprint;
+        var x = this.actor[i].x() + (tx - this.actor[i].x())*this.sprint;
 
-      this.actor.x(x);
-      this.actor.y(y);
+        this.actor[i].x(x);
+        this.actor[i].y(y);
+      }
+      
+
+      //Eat something
+      if(Math.random() > 0.99)
+      {
+        var complement = this.actor[this.actor.length-1]
+
+        var new_actor = new Kinetic.Circle({x:complement.x()+30, y:complement.y()+30, radius: 10, fill:'#000', stroke: 'rgb(191, 191, 191)', strokeWidth: 3});
+
+        this.actor.push(new_actor);
+
+        layers['game'].add(new_actor);
+      }
 
     }
   };
