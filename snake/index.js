@@ -88,7 +88,7 @@ jQuery(document).ready(function(){
       
       //updateFrameRate(frame.time);
 
-      wait(500, frame.time, function(){
+      wait(10, frame.time, function(){
           layers['loading'].getCanvas().getContext().globalCompositeOperation = 'darker';
           circlesList.update();
       });
@@ -137,6 +137,7 @@ jQuery(document).ready(function(){
       if (second != currentSecond) 
       {
          callback();
+         currentSecond = second;
       }
   }
 
@@ -146,17 +147,51 @@ jQuery(document).ready(function(){
     var snake = new Player();
 
     layers['game'].add(snake.actor[0]);
+
     stage.add(layers['game']);
 
-    stage.on('mousemove.game', function(data){
+    // stage.on('mousemove.game', function(data){
 
-        snake.targetPos.x = data.evt.clientX;
-        snake.targetPos.y = data.evt.clientY;
+    //     snake.targetPos.x = data.evt.clientX;
+    //     snake.targetPos.y = data.evt.clientY;
+    // });
+
+    var canvas = layers['game'].getCanvas()._canvas;
+    
+    $(canvas).attr('tabindex', 1);
+
+    canvas.focus();
+
+    $(canvas).keydown(function (data) {
+
+      var key = data.keyCode;
+
+        //Going left
+        if(key == 37 && snake.direction != 'right')
+        {
+          snake.direction = 'left'; 
+        }
+        //Going up
+        else if(key == 38 && snake.direction != 'down')
+        {
+          snake.direction = 'up';
+        }
+        //Going right
+        else if(key == 39 && snake.direction != 'left')
+        {
+          snake.direction = 'right';
+        }
+        //Going down
+        else if(key == 40 && snake.direction != 'up')
+        {
+          snake.direction = 'down';
+        }
     });
 
     var anim = new Kinetic.Animation(function(frame) {
 
-       wait(500, frame.time, function(){
+       wait(60, frame.time, function(){
+          
           snake.update();
       });
 
@@ -169,33 +204,95 @@ jQuery(document).ready(function(){
 
   function Player()
   {
-    this.actor = [new Kinetic.Circle({x:stage.getWidth()/2, y:stage.getHeight()/2, radius: 10, fill:'#000', stroke: 'rgb(191, 191, 191)', strokeWidth: 3})];
+    this.actor = [new Kinetic.Circle({x:stage.getWidth()/2, y:stage.getHeight()/2, radius: 15, fill:'#000', stroke: 'rgb(191, 191, 191)', strokeWidth: 3})];
 
+    this.direction = 'right';
     this.targetPos = {x:stage.getWidth()/2, y:stage.getHeight()/2};
-    this.sprint = 0.05;
+    this.sprint = 30;
+
     this.update = function()
     {
       
-      for(var i=0; i<this.actor.length; i++)
-      {
-        var ty = this.targetPos.y - i*15;
-        var tx = this.targetPos.x - i*15;
-        var y = this.actor[i].y() + (ty - this.actor[i].y())*this.sprint;
-        var x = this.actor[i].x() + (tx - this.actor[i].x())*this.sprint;
+      //Collipsion
+      var x = this.actor[0].x();
+      var y = this.actor[0].y();
 
-        this.actor[i].x(x);
-        this.actor[i].y(y);
+      //Collision
+      if(x>= (window.innerWidth-15) || x <= 15)
+      {
+        return;
       }
+
+      if(y >= (window.innerHeight-15) || y <= 15)
+      {
+        return;
+      }
+
+      if(this.direction == 'right')
+      {
+        x += this.sprint;
+      }
+      else if(this.direction == 'left')
+      {
+        x -= this.sprint;
+      }
+      else if(this.direction == 'up')
+      {
+        y -= this.sprint;
+      }
+      else if(this.direction == 'down')
+      {
+        y += this.sprint;
+      }
+
+      //Remove last element and return it
+      var tail = this.actor.pop();
+      tail.x(x);
+      tail.y(y);
+
+      //Add to the begining
+      this.actor.unshift(tail);
+
+      // for(var i=0; i<this.actor.length; i++)
+      // {
+        
+      //   var x = this.actor[i].x();
+      //   var y = this.actor[i].y();
+
+      //   if(this.direction == 'right')
+      //   {
+      //     this.actor[i].x(x+this.sprint);
+      //   }
+      //   else if(this.direction == 'left')
+      //   {
+      //     this.actor[i].x(x-this.sprint);
+      //   }
+      //   else if(this.direction == 'up')
+      //   {
+      //     this.actor[i].y(y-this.sprint);
+      //   }
+      //   else if(this.direction == 'down')
+      //   {
+      //     this.actor[i].y(y+this.sprint);
+      //   }
+
+      //   // var ty = this.targetPos.y - i*15;
+      //   // var tx = this.targetPos.x - i*15;
+      //   // var y = this.actor[i].y() + (ty - this.actor[i].y())*this.sprint;
+      //   // var x = this.actor[i].x() + (tx - this.actor[i].x())*this.sprint;
+
+      //   // this.actor[i].x(x);
+      //   // this.actor[i].y(y);
+      // }
       
 
       //Eat something
-      if(Math.random() > 0.99)
+      if(Math.random() > 0.89)
       {
-        var complement = this.actor[this.actor.length-1]
+        
+        var new_actor = new Kinetic.Circle({x: tail.x(), y: tail.y(), radius: 15, fill:'red', stroke: 'rgb(191, 191, 191)', strokeWidth: 3});
 
-        var new_actor = new Kinetic.Circle({x:complement.x()+30, y:complement.y()+30, radius: 10, fill:'#000', stroke: 'rgb(191, 191, 191)', strokeWidth: 3});
-
-        this.actor.push(new_actor);
+        this.actor.unshift(new_actor);
 
         layers['game'].add(new_actor);
       }
