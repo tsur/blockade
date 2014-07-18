@@ -146,7 +146,7 @@ jQuery(document).ready(function(){
     
     var snake = new Player();
 
-    layers['game'].add(snake.actor[0]);
+    layers['game'].add(snake.head);
 
     stage.add(layers['game']);
 
@@ -202,56 +202,72 @@ jQuery(document).ready(function(){
   }
   
 
+  var SIZE = 10;
   function Player()
   {
-    this.actor = [new Kinetic.Circle({x:stage.getWidth()/2, y:stage.getHeight()/2, radius: 15, fill:'#000', stroke: 'rgb(191, 191, 191)', strokeWidth: 3})];
+    this.head = new Kinetic.Circle({x:SIZE, y:SIZE, radius: SIZE, fill:'black', stroke: 'rgb(191, 191, 191)', strokeWidth: 1})
+    this.actor = [];
 
     this.direction = 'right';
-    this.targetPos = {x:stage.getWidth()/2, y:stage.getHeight()/2};
-    this.sprint = 30;
+    this.sprint = SIZE*2;
 
     this.update = function()
     {
       
       //Collipsion
-      var x = this.actor[0].x();
-      var y = this.actor[0].y();
+      var x = x2 = this.head.x();
+      var y = y2 = this.head.y();
 
       //Collision
-      if(x>= (window.innerWidth-15) || x <= 15)
+      if(x> (window.innerWidth-SIZE) || x < SIZE)
       {
         return;
       }
 
-      if(y >= (window.innerHeight-15) || y <= 15)
+      if(y > (window.innerHeight-SIZE) || y < SIZE)
       {
         return;
       }
 
       if(this.direction == 'right')
       {
-        x += this.sprint;
+        
+        x2 += (this.sprint);
+        x = x2-(this.sprint);
       }
       else if(this.direction == 'left')
       {
-        x -= this.sprint;
+        
+        x2 -= (this.sprint);
+        x = x2+(this.sprint);
       }
       else if(this.direction == 'up')
       {
-        y -= this.sprint;
+        
+        y2 -= (this.sprint);
+        y = y2+(this.sprint);
       }
       else if(this.direction == 'down')
       {
-        y += this.sprint;
+        
+        y2 += (this.sprint);
+        y = y2-(this.sprint);
       }
 
       //Remove last element and return it
-      var tail = this.actor.pop();
-      tail.x(x);
-      tail.y(y);
+      if (this.actor.length)
+      {
+        var tail = this.actor.pop();
+        tail.x(x);
+        tail.y(y);
 
-      //Add to the begining
-      this.actor.unshift(tail);
+        //Add to the begining
+        this.actor.unshift(tail);
+      }
+
+      this.head.x(x2);
+      this.head.y(y2);
+      
 
       // for(var i=0; i<this.actor.length; i++)
       // {
@@ -290,9 +306,9 @@ jQuery(document).ready(function(){
       if(Math.random() > 0.89)
       {
         
-        var new_actor = new Kinetic.Circle({x: tail.x(), y: tail.y(), radius: 15, fill:'red', stroke: 'rgb(191, 191, 191)', strokeWidth: 3});
+        var new_actor = new Kinetic.Circle({x: x, y: y, radius: SIZE, fill:'red', stroke: 'rgb(191, 191, 191)', strokeWidth: 1});
 
-        this.actor.unshift(new_actor);
+        this.actor.push(new_actor);
 
         layers['game'].add(new_actor);
       }
