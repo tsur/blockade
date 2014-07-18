@@ -8,17 +8,21 @@ jQuery(document).ready(function(){
   });
 
   var SIZE = 10;
+  var time_update_game = 60;
 
   var layers = {'bg':new Kinetic.Layer(), 'loading':new Kinetic.Layer({x: (stage.getWidth()/2)-(320/2),
     y: (stage.getHeight()/2)-(285/2),
     width: 320,
     height: 285}), 'game':new Kinetic.Layer({x:0,y:0,width:SIZE*2*50, height:SIZE*2*30})};
 
+  var scaleX = window.innerWidth/layers['game'].getWidth();
+  var scaleY = window.innerHeight/layers['game'].getHeight();
+
   //Haces un rectangulo sobre lo que quieras centrar y luego calculas:
   // x: (stage.getWidth()/2)-(rect.getWidth()/2)
   // y: (stage.getHeight()/2)-(rect.getHeight()/2)
 
-  var rect = new Kinetic.Rect({
+  var bg_rect = new Kinetic.Rect({
 
     'width': stage.attrs.width,
     'height': stage.attrs.height,
@@ -28,7 +32,7 @@ jQuery(document).ready(function(){
   });
 
   // add the shape to the layer
-  layers['bg'].add(rect);
+  layers['bg'].add(bg_rect);
 
   var circlesList = new CircleList();
 
@@ -156,8 +160,7 @@ jQuery(document).ready(function(){
     // fill: 'transparent' //Background Color
     // });
     // layers['game'].add(border);
-    var scaleX = window.innerWidth/layers['game'].getWidth();
-    var scaleY = window.innerHeight/layers['game'].getHeight();
+    
     layers['game'].scale({x:scaleX, y:scaleY});
     console.log(1+scaleX, scaleY);
 
@@ -205,7 +208,7 @@ jQuery(document).ready(function(){
 
     var anim = new Kinetic.Animation(function(frame) {
 
-       wait(60, frame.time, function(){
+       wait(time_update_game, frame.time, function(){
           
           snake.update();
       });
@@ -216,7 +219,6 @@ jQuery(document).ready(function(){
     anim.start();
   }
   
-
   function Player()
   {
     this.head = new Kinetic.Circle({x:SIZE, y:SIZE, radius: SIZE, fill:'black', stroke: 'rgb(191, 191, 191)', strokeWidth: 1})
@@ -231,19 +233,6 @@ jQuery(document).ready(function(){
       //Collipsion
       var x = x2 = this.head.x();
       var y = y2 = this.head.y();
-
-      //Collision
-      if(x>= window.innerWidth || x <= 0)
-      {
-        console.log(x,y);
-        return;
-      }
-
-      if(y >= window.innerHeight || y <= 0)
-      {
-        console.log(x,y);
-        return;
-      }
 
       if(this.direction == 'right')
       {
@@ -268,6 +257,17 @@ jQuery(document).ready(function(){
         
         y2 += (this.sprint);
         y = y2-(this.sprint);
+      }
+
+      //Collision
+      if(x2 < 0 || x2*scaleX>window.innerWidth)
+      {
+        return;
+      }
+
+      if(y2 < 0 || y2*scaleY>window.innerHeight)
+      {
+        return;
       }
 
       //Remove last element and return it
@@ -327,9 +327,28 @@ jQuery(document).ready(function(){
         this.actor.push(new_actor);
 
         layers['game'].add(new_actor);
+
+        if(time_update_game>10)
+          time_update_game -= 1
       }
 
     }
+
+    $(window).resize(function(e){
+
+        scaleX = window.innerWidth/layers['game'].getWidth();
+        scaleY = window.innerHeight/layers['game'].getHeight();
+        layers['game'].scale({x:scaleX, y:scaleY});
+        layers['game'].draw();
+
+        stage.setWidth(window.innerWidth);
+        stage.setHeight(window.innerHeight);
+
+        bg_rect.size({width:window.innerWidth, height:window.innerHeight});
+        bg_rect.fillLinearGradientEndPoint({x:window.innerWidth,y:window.innerHeight});
+        layers['bg'].draw();
+
+    });
   };
 
   // data structures
