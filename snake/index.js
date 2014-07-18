@@ -7,10 +7,12 @@ jQuery(document).ready(function(){
     height: window.innerHeight
   });
 
+  var SIZE = 10;
+
   var layers = {'bg':new Kinetic.Layer(), 'loading':new Kinetic.Layer({x: (stage.getWidth()/2)-(320/2),
     y: (stage.getHeight()/2)-(285/2),
     width: 320,
-    height: 285}), 'game':new Kinetic.Layer()};
+    height: 285}), 'game':new Kinetic.Layer({x:0,y:0,width:SIZE*2*50, height:SIZE*2*30})};
 
   //Haces un rectangulo sobre lo que quieras centrar y luego calculas:
   // x: (stage.getWidth()/2)-(rect.getWidth()/2)
@@ -146,6 +148,19 @@ jQuery(document).ready(function(){
     
     var snake = new Player();
 
+    // var border = new Kinetic.Rect({
+    // width: layers['game'].getWidth(),
+    // height: layers['game'].getHeight(),
+    // stroke: 'black',
+    // strokeWidth: 1, //Border Size in Pixels
+    // fill: 'transparent' //Background Color
+    // });
+    // layers['game'].add(border);
+    var scaleX = window.innerWidth/layers['game'].getWidth();
+    var scaleY = window.innerHeight/layers['game'].getHeight();
+    layers['game'].scale({x:scaleX, y:scaleY});
+    console.log(1+scaleX, scaleY);
+
     layers['game'].add(snake.head);
 
     stage.add(layers['game']);
@@ -202,7 +217,6 @@ jQuery(document).ready(function(){
   }
   
 
-  var SIZE = 10;
   function Player()
   {
     this.head = new Kinetic.Circle({x:SIZE, y:SIZE, radius: SIZE, fill:'black', stroke: 'rgb(191, 191, 191)', strokeWidth: 1})
@@ -219,13 +233,15 @@ jQuery(document).ready(function(){
       var y = y2 = this.head.y();
 
       //Collision
-      if(x> (window.innerWidth-SIZE) || x < SIZE)
+      if(x>= window.innerWidth || x <= 0)
       {
+        console.log(x,y);
         return;
       }
 
-      if(y > (window.innerHeight-SIZE) || y < SIZE)
+      if(y >= window.innerHeight || y <= 0)
       {
+        console.log(x,y);
         return;
       }
 
