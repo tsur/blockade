@@ -4,12 +4,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
   <title>Ebury Games</title>
-  <link rel="stylesheet" href="dist/css/bootstrap.min.css" />
+  <!-- <link rel="stylesheet" href="dist/css/bootstrap.min.css" /> -->
   <link rel="stylesheet" href="snake/css/index.css" />
   <script src="vendors/jquery/dist/jquery.min.js"></script>
   <script src="vendors/kineticjs/kinetic.min.js"></script>
+  <script src="vendors/PreloadJS/lib/preloadjs-0.4.1.min.js"></script>
 </head>
 <body>
+  <section id="loading">
+    <img src="dist/images/loading-bars.svg"/>
+    <p>Loading ...</p>
+  </section>
   <section id="game"></section>
   <script src="snake/index.js"></script>
 </body>
