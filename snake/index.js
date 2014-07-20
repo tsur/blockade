@@ -28,9 +28,12 @@ jQuery(document).ready(function(){
     {'id':'ebury_logo', 'src':'./snake/images/ebury_logo.png'},
     {'id':'snake_body', 'src':'./snake/images/dollar_sign.png'},
     //{'id':'audio_intro', 'src':'./snake/sounds/intro.ogg'},
-    {'id':'audio_main', 'src':'./snake/sounds/main.ogg'},
-    {'id':'audio_gameover', 'src':'./snake/sounds/gameover.ogg'},
-    {'id':'audio_bacala', 'src':'./snake/sounds/bacala.ogg'},
+
+    // {'id':'audio_main', 'src':'http://dl.dropbox.com/u/26141789/canvas/snake/main.ogg'},
+    {'id':'audio_main', 'src':'./snake/sounds/main3.ogg'},
+    {'id':'audio_gameover', 'src':'./snake/sounds/bacala.ogg'},
+    {'id':'audio_food', 'src':'./snake/sounds/eating.ogg'},
+    {'id':'audio_welcome', 'src':'./snake/sounds/welcome.ogg'},
 
   ];
 
@@ -44,16 +47,7 @@ jQuery(document).ready(function(){
   {
     $('#loading').remove();
 
-    // assets_queue.getResult('audio_main').addEventListener('ended', function(){
-
-    //   console.log('ended');
-    //   assets_queue.getResult('audio_main').pause();
-    //   assets_queue.getResult('audio_main').play();
-
-    // }, false);
-    
-    // assets_queue.getResult('audio_main').loop=true;
-    // assets_queue.getResult('audio_main').play();
+    assets_queue.getResult('audio_welcome').play();
 
     var SIZE = 10;
     var time_update_game = 60;
@@ -151,10 +145,20 @@ jQuery(document).ready(function(){
             opacity: 0,
             duration: 1,
             onFinish: function(){
-                console.log('done!');
                 tween.destroy();
                 layers['loading'].destroy();
                 //Startgame
+                // assets_queue.getResult('audio_main').addEventListener('ended', function(){
+
+                //   console.log('ended');
+                //   assets_queue.getResult('audio_main').pause();
+                //   assets_queue.getResult('audio_main').play();
+
+                // }, false);
+
+                // assets_queue.getResult('audio_main').loop=true;
+                // assets_queue.getResult('audio_main').play();
+
                 startGame();
             }
         }).play();
@@ -194,6 +198,7 @@ jQuery(document).ready(function(){
       console.log(1+scaleX, scaleY);
 
       layers['game'].add(snake.head);
+      layers['game'].add(snake.food);
 
       stage.add(layers['game']);
 
@@ -252,6 +257,7 @@ jQuery(document).ready(function(){
     {
       this.head = new Kinetic.Circle({x:SIZE, y:SIZE, radius: SIZE, fill:'black', stroke: 'rgb(191, 191, 191)', strokeWidth: 1})
       this.actor = [];
+      this.food = new Kinetic.Circle({x: layers['game'].getWidth()/2-SIZE, y: layers['game'].getHeight()/2-SIZE, radius: SIZE, fill:'green', stroke: 'rgb(191, 191, 191)', strokeWidth: 1});
 
       this.direction = 'right';
       this.sprint = SIZE*2;
@@ -288,18 +294,13 @@ jQuery(document).ready(function(){
           y = y2-(this.sprint);
         }
 
-        //Collision
-        if(x2 < 0 || x2*scaleX>window.innerWidth)
+        //Wall Collision
+        if(x2 < 0 || x2*scaleX>window.innerWidth || y2 < 0 || y2*scaleY>window.innerHeight)
         {
           // assets_queue.getResult('audio_main').pause();
-          assets_queue.getResult('audio_bacala').play();
-          return;
-        }
-
-        if(y2 < 0 || y2*scaleY>window.innerHeight)
-        {
-          // assets_queue.getResult('audio_main').pause();
-          assets_queue.getResult('audio_bacala').play();
+          // assets_queue.getResult('audio_gameover').pause();
+          // assets_queue.getResult('audio_gameover').currentTime = 0;
+          assets_queue.getResult('audio_gameover').play();
           return;
         }
 
@@ -351,10 +352,15 @@ jQuery(document).ready(function(){
         // }
         
 
-        //Eat something
-        if(Math.random() > 0.89)
+        //Food collision
+        if(x2==this.food.x() && y2==this.food.y())
         {
           
+          //Music
+          assets_queue.getResult('audio_food').pause();
+          assets_queue.getResult('audio_food').currentTime = 0;
+          assets_queue.getResult('audio_food').play();
+
           var new_actor = new Kinetic.Circle({x: x, y: y, radius: SIZE, fill:'red', stroke: 'rgb(191, 191, 191)', strokeWidth: 1});
 
           this.actor.push(new_actor);
@@ -363,6 +369,14 @@ jQuery(document).ready(function(){
 
           if(time_update_game>10)
             time_update_game -= 1
+
+          //Points
+          // score += 10;
+          // scoreText.innerHTML = "Score: "+score;
+
+          //Change food position
+          
+
         }
 
       }
