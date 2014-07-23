@@ -29,8 +29,8 @@ jQuery(document).ready(function(){
     {'id':'snake_body', 'src':'./snake/images/dollar_sign.png'},
     //{'id':'audio_intro', 'src':'./snake/sounds/intro.ogg'},
 
-    // {'id':'audio_main', 'src':'http://dl.dropbox.com/u/26141789/canvas/snake/main.ogg'},
-    {'id':'audio_main', 'src':'./snake/sounds/main3.ogg'},
+    {'id':'audio_main', 'src':'http://dl.dropbox.com/u/26141789/canvas/snake/main.ogg'},
+    //{'id':'audio_main', 'src':'./snake/sounds/main3.ogg'},
     {'id':'audio_gameover', 'src':'./snake/sounds/bacala.ogg'},
     {'id':'audio_food', 'src':'./snake/sounds/eating.ogg'},
     {'id':'audio_welcome', 'src':'./snake/sounds/welcome.ogg'},
@@ -113,7 +113,7 @@ jQuery(document).ready(function(){
              currentSecond = second;
           }
           frameCount ++;
-      }
+    }
 
 
     var anim = new Kinetic.Animation(function(frame) {
@@ -305,8 +305,19 @@ jQuery(document).ready(function(){
         }
 
         //Remove last element and return it
-        if (this.actor.length)
+        if(this.actor.length)
         {
+          
+          //Snake collision
+          for(var i=0; i<this.actor.length; i++)
+          {
+            if(x2==this.actor[i].x() && y2==this.actor[i].y())
+            {
+              assets_queue.getResult('audio_gameover').play();
+              return;
+            }
+          }
+
           var tail = this.actor.pop();
           tail.x(x);
           tail.y(y);
@@ -318,40 +329,6 @@ jQuery(document).ready(function(){
         this.head.x(x2);
         this.head.y(y2);
         
-
-        // for(var i=0; i<this.actor.length; i++)
-        // {
-          
-        //   var x = this.actor[i].x();
-        //   var y = this.actor[i].y();
-
-        //   if(this.direction == 'right')
-        //   {
-        //     this.actor[i].x(x+this.sprint);
-        //   }
-        //   else if(this.direction == 'left')
-        //   {
-        //     this.actor[i].x(x-this.sprint);
-        //   }
-        //   else if(this.direction == 'up')
-        //   {
-        //     this.actor[i].y(y-this.sprint);
-        //   }
-        //   else if(this.direction == 'down')
-        //   {
-        //     this.actor[i].y(y+this.sprint);
-        //   }
-
-        //   // var ty = this.targetPos.y - i*15;
-        //   // var tx = this.targetPos.x - i*15;
-        //   // var y = this.actor[i].y() + (ty - this.actor[i].y())*this.sprint;
-        //   // var x = this.actor[i].x() + (tx - this.actor[i].x())*this.sprint;
-
-        //   // this.actor[i].x(x);
-        //   // this.actor[i].y(y);
-        // }
-        
-
         //Food collision
         if(x2==this.food.x() && y2==this.food.y())
         {
@@ -375,7 +352,36 @@ jQuery(document).ready(function(){
           // scoreText.innerHTML = "Score: "+score;
 
           //Change food position
-          
+          var ele = this.actor[Math.floor(Math.random()*this.actor.length)];
+
+          var max_w = layers['game'].getWidth() % 2 == 0 ? layers['game'].getWidth()-1: layers['game'].getWidth();
+          var max_h = layers['game'].getHeight() % 2 == 0 ? layers['game'].getHeight()-1: layers['game'].getHeight();
+          var x = (1 + 2*parseInt(Math.random()*((max_w-1)/2+1)));
+          var y = (1 + 2*parseInt(Math.random()*((max_h-1)/2+1)));
+          console.log(x,y);
+          var x = SIZE*x;//(2*SIZE)*Math.round(Math.random() * layers['game'].getWidth());
+          var y = SIZE*y;//(2*SIZE)*Math.round(Math.random() * layers['game'].getHeight());
+
+          if(x<=0)
+          {
+            x=SIZE;
+          }
+          else if(x>=layers['game'].getWidth())
+          {
+            x=layers['game'].getWidth()-SIZE;
+          }
+
+          if(y<=0)
+          {
+            y=SIZE;
+          }
+          else if(y>=layers['game'].getHeight())
+          {
+            y=layers['game'].getHeight()-SIZE;
+          }
+
+          this.food.x(x);
+          this.food.y(y);
 
         }
 
