@@ -29,8 +29,8 @@ jQuery(document).ready(function(){
     {'id':'snake_body', 'src':'./snake/images/dollar_sign.png'},
     //{'id':'audio_intro', 'src':'./snake/sounds/intro.ogg'},
 
-    {'id':'audio_main', 'src':'http://dl.dropbox.com/u/26141789/canvas/snake/main.ogg'},
-    //{'id':'audio_main', 'src':'./snake/sounds/main3.ogg'},
+    //{'id':'audio_main', 'src':'http://dl.dropbox.com/u/26141789/canvas/snake/main.ogg'},
+    {'id':'audio_main', 'src':'./snake/sounds/main3.ogg'},
     {'id':'audio_gameover', 'src':'./snake/sounds/bacala.ogg'},
     {'id':'audio_food', 'src':'./snake/sounds/eating.ogg'},
     {'id':'audio_welcome', 'src':'./snake/sounds/welcome.ogg'},
@@ -50,7 +50,7 @@ jQuery(document).ready(function(){
     assets_queue.getResult('audio_welcome').play();
 
     var SIZE = 10;
-    var time_update_game = 60;
+    var time_update_game = 85;
 
     layers['loading'] = new Kinetic.Layer({x: (stage.getWidth()/2)-(320/2),
       y: (stage.getHeight()/2)-(285/2),
@@ -250,6 +250,22 @@ jQuery(document).ready(function(){
 
       }, layers['game']);
 
+      $(window).resize(function(e){
+
+          scaleX = window.innerWidth/layers['game'].getWidth();
+          scaleY = window.innerHeight/layers['game'].getHeight();
+          layers['game'].scale({x:scaleX, y:scaleY});
+          layers['game'].draw();
+
+          stage.setWidth(window.innerWidth);
+          stage.setHeight(window.innerHeight);
+
+          bg_rect.size({width:window.innerWidth, height:window.innerHeight});
+          bg_rect.fillLinearGradientEndPoint({x:window.innerWidth,y:window.innerHeight});
+          layers['bg'].draw();
+
+      });
+
       anim.start();
     }
     
@@ -261,6 +277,9 @@ jQuery(document).ready(function(){
 
       this.direction = 'right';
       this.sprint = SIZE*2;
+
+      this.max_w = (layers['game'].getWidth() % 2 == 0 ? layers['game'].getWidth()-1: layers['game'].getWidth())/this.sprint;
+      this.max_h=(layers['game'].getHeight() % 2 == 0 ? layers['game'].getHeight()-1: layers['game'].getHeight())/this.sprint;
 
       this.update = function()
       {
@@ -344,64 +363,47 @@ jQuery(document).ready(function(){
 
           layers['game'].add(new_actor);
 
-          if(time_update_game>10)
-            time_update_game -= 1
+          if(time_update_game>5)
+            time_update_game -= 0.5
 
           //Points
           // score += 10;
           // scoreText.innerHTML = "Score: "+score;
 
           //Change food position
-          var ele = this.actor[Math.floor(Math.random()*this.actor.length)];
 
-          var max_w = layers['game'].getWidth() % 2 == 0 ? layers['game'].getWidth()-1: layers['game'].getWidth();
-          var max_h = layers['game'].getHeight() % 2 == 0 ? layers['game'].getHeight()-1: layers['game'].getHeight();
-          var x = (1 + 2*parseInt(Math.random()*((max_w-1)/2+1)));
-          var y = (1 + 2*parseInt(Math.random()*((max_h-1)/2+1)));
-          console.log(x,y);
-          var x = SIZE*x;//(2*SIZE)*Math.round(Math.random() * layers['game'].getWidth());
-          var y = SIZE*y;//(2*SIZE)*Math.round(Math.random() * layers['game'].getHeight());
+          var calculate_food_position = false;
+          
+          do
+          {
+            calculate_food_position = this.calculate_food_position();
+          }
+          while(!calculate_food_position);
 
-          if(x<=0)
-          {
-            x=SIZE;
-          }
-          else if(x>=layers['game'].getWidth())
-          {
-            x=layers['game'].getWidth()-SIZE;
-          }
-
-          if(y<=0)
-          {
-            y=SIZE;
-          }
-          else if(y>=layers['game'].getHeight())
-          {
-            y=layers['game'].getHeight()-SIZE;
-          }
-
-          this.food.x(x);
-          this.food.y(y);
+          this.food.x(calculate_food_position.x);
+          this.food.y(calculate_food_position.y);
 
         }
 
       }
 
-      $(window).resize(function(e){
+      this.calculate_food_position = function()
+      {
+         
+          var x = SIZE*(2*(1 + parseInt(Math.random()*this.max_w))-1);
+          var y = SIZE*(2*(1 + parseInt(Math.random()*this.max_h))-1);
 
-          scaleX = window.innerWidth/layers['game'].getWidth();
-          scaleY = window.innerHeight/layers['game'].getHeight();
-          layers['game'].scale({x:scaleX, y:scaleY});
-          layers['game'].draw();
+          for(var i=0; i<this.actor.length; i++)
+            {
+              if(x==this.actor[i].x() && y==this.actor[i].y())
+              {
+                return false;
+              }
+            }
 
-          stage.setWidth(window.innerWidth);
-          stage.setHeight(window.innerHeight);
+          return {x:x,y:y};
+      }
 
-          bg_rect.size({width:window.innerWidth, height:window.innerHeight});
-          bg_rect.fillLinearGradientEndPoint({x:window.innerWidth,y:window.innerHeight});
-          layers['bg'].draw();
-
-      });
     };
 
     // data structures
