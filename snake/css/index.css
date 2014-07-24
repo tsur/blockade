@@ -21,14 +21,38 @@ body {padding: 0; margin: 0; overflow: hidden;}
   height:64;
 }
 
-#loading p
+#loading p, #score
 {
   position: relative;  
-  z-index: 1; 
   font: 32px "Press Start 2P", cursive;
   color: white;
   text-align: center;
   margin: 0;
+}
+
+#score
+{
+  margin-top:20px;
+}
+
+#gameover
+{
+  z-index: 1;
+  position:absolute;
+  width:400px;
+  height:150px;
+  margin-top: -75px;
+  margin-left: -200px;
+  top:50%;
+  left:50%;
+  background-color: #8c8c8c;
+  display:none;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  -webkit-box-shadow: 2px 2px 2px 0px rgba(0,0,0,0.35);
+  -moz-box-shadow: 2px 2px 2px 0px rgba(0,0,0,0.35);
+  box-shadow: 2px 2px 2px 0px rgba(0,0,0,0.35);
 }
 
 .kineticjs-content

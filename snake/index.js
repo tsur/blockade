@@ -50,7 +50,7 @@ jQuery(document).ready(function(){
     assets_queue.getResult('audio_welcome').play();
 
     var SIZE = 10;
-    var time_update_game = 85;
+    var time_update_game = 75;
 
     layers['loading'] = new Kinetic.Layer({x: (stage.getWidth()/2)-(320/2),
       y: (stage.getHeight()/2)-(285/2),
@@ -267,6 +267,8 @@ jQuery(document).ready(function(){
       });
 
       anim.start();
+
+      snake.anim = anim;
     }
     
     function Player()
@@ -277,13 +279,19 @@ jQuery(document).ready(function(){
 
       this.direction = 'right';
       this.sprint = SIZE*2;
+      this.score = 0;
+      this.running = true;
 
       this.max_w = (layers['game'].getWidth() % 2 == 0 ? layers['game'].getWidth()-1: layers['game'].getWidth())/this.sprint;
       this.max_h=(layers['game'].getHeight() % 2 == 0 ? layers['game'].getHeight()-1: layers['game'].getHeight())/this.sprint;
 
       this.update = function()
       {
-        
+        if(!this.running)
+        {
+          return;
+        }
+
         //Collipsion
         var x = x2 = this.head.x();
         var y = y2 = this.head.y();
@@ -316,11 +324,7 @@ jQuery(document).ready(function(){
         //Wall Collision
         if(x2 < 0 || x2*scaleX>window.innerWidth || y2 < 0 || y2*scaleY>window.innerHeight)
         {
-          // assets_queue.getResult('audio_main').pause();
-          // assets_queue.getResult('audio_gameover').pause();
-          // assets_queue.getResult('audio_gameover').currentTime = 0;
-          assets_queue.getResult('audio_gameover').play();
-          return;
+          return this.game_over();
         }
 
         //Remove last element and return it
@@ -332,8 +336,7 @@ jQuery(document).ready(function(){
           {
             if(x2==this.actor[i].x() && y2==this.actor[i].y())
             {
-              assets_queue.getResult('audio_gameover').play();
-              return;
+              return this.game_over();
             }
           }
 
@@ -367,7 +370,7 @@ jQuery(document).ready(function(){
             time_update_game -= 0.5
 
           //Points
-          // score += 10;
+          this.score += 10;
           // scoreText.innerHTML = "Score: "+score;
 
           //Change food position
@@ -402,6 +405,19 @@ jQuery(document).ready(function(){
             }
 
           return {x:x,y:y};
+      }
+
+      this.game_over = function()
+      {
+        this.running = false;
+        
+        this.anim.stop();
+        assets_queue.getResult('audio_gameover').play();
+        document.getElementById('gameover').style.display='block';
+        document.getElementById('score').innerHTML='SCORE: '+this.score;
+        // assets_queue.getResult('audio_main').pause();
+        // assets_queue.getResult('audio_gameover').pause();
+        // assets_queue.getResult('audio_gameover').currentTime = 0;
       }
 
     };
