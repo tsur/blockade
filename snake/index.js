@@ -25,15 +25,19 @@ jQuery(document).ready(function(){
 
   var assets = [
 
+    //Images
     {'id':'ebury_logo', 'src':'./snake/images/ebury_logo.png'},
-    {'id':'snake_body', 'src':'./snake/images/dollar_sign.png'},
-    //{'id':'audio_intro', 'src':'./snake/sounds/intro.ogg'},
+    {'id':'snake_body', 'src':'./snake/images/dollar.png'},
+    {'id':'snake_head', 'src':'./snake/images/snake_head.png'},
+    {'id':'zuri_pic', 'src':'./snake/images/snake_head.png'},
 
+    //Audios
     //{'id':'audio_main', 'src':'http://dl.dropbox.com/u/26141789/canvas/snake/main.ogg'},
     {'id':'audio_main', 'src':'./snake/sounds/main3.ogg'},
     {'id':'audio_gameover', 'src':'./snake/sounds/bacala.ogg'},
     {'id':'audio_food', 'src':'./snake/sounds/eating.ogg'},
-    {'id':'audio_welcome', 'src':'./snake/sounds/welcome.ogg'},
+    {'id':'audio_welcome', 'src':'./snake/sounds/welcome_ebury.ogg'},
+    {'id':'zuri_sound', 'src':'./snake/sounds/nonono.ogg'}
 
   ];
 
@@ -49,15 +53,15 @@ jQuery(document).ready(function(){
 
     assets_queue.getResult('audio_welcome').play();
 
-    var SIZE = 10;
-    var time_update_game = 75;
+    var SIZE = 180;
+    var time_update_game = 30;
 
     layers['loading'] = new Kinetic.Layer({x: (stage.getWidth()/2)-(320/2),
       y: (stage.getHeight()/2)-(285/2),
       width: 320,
       height: 285});
 
-    layers['game'] = new Kinetic.Layer({x:0,y:0,width:SIZE*2*50, height:SIZE*2*30});
+    layers['game'] = new Kinetic.Layer({x:0,y:0,width:SIZE*20, height:SIZE*10});
 
     var scaleX = window.innerWidth/layers['game'].getWidth();
     var scaleY = window.innerHeight/layers['game'].getHeight();
@@ -158,7 +162,7 @@ jQuery(document).ready(function(){
 
                 // assets_queue.getResult('audio_main').loop=true;
                 // assets_queue.getResult('audio_main').play();
-
+                initGame();
                 startGame();
             }
         }).play();
@@ -180,72 +184,65 @@ jQuery(document).ready(function(){
         }
     }
 
-    function startGame()
+    var snake=new Player();
+    var anim;
+    var proccesing = false;
+
+    function initGame()
     {
       
-      var snake = new Player();
-
-      // var border = new Kinetic.Rect({
-      // width: layers['game'].getWidth(),
-      // height: layers['game'].getHeight(),
-      // stroke: 'black',
-      // strokeWidth: 1, //Border Size in Pixels
-      // fill: 'transparent' //Background Color
-      // });
-      // layers['game'].add(border);
-      
       layers['game'].scale({x:scaleX, y:scaleY});
-      console.log(1+scaleX, scaleY);
-
-      layers['game'].add(snake.head);
-      layers['game'].add(snake.food);
-
-      stage.add(layers['game']);
-
-      // stage.on('mousemove.game', function(data){
-
-      //     snake.targetPos.x = data.evt.clientX;
-      //     snake.targetPos.y = data.evt.clientY;
-      // });
+      
 
       var canvas = layers['game'].getCanvas()._canvas;
       
       $(canvas).attr('tabindex', 1);
 
-      canvas.focus();
-
       $(canvas).keydown(function (data) {
 
         var key = data.keyCode;
 
-          //Going left
-          if(key == 37 && snake.direction != 'right')
+          //SetTimeOut avoids cases as for instance going to left direction and pressing very quickly top and left, giving as a result a collision with the left part of the snake(basically going to the opposite way)
+
+          if(!snake)
           {
-            snake.direction = 'left'; 
+            return;
+          }
+
+          //Going left
+          if(key == 37 && snake.direction != 'right' && !proccesing)
+          {
+            //snake.direction = 'left';
+            setTimeout(function(){console.log('left');snake.direction = 'left';}, 1);
           }
           //Going up
-          else if(key == 38 && snake.direction != 'down')
+          else if(key == 38 && snake.direction != 'down' && !proccesing)
           {
-            snake.direction = 'up';
+            //snake.direction = 'up';
+            setTimeout(function(){console.log('up');snake.direction = 'up';}, 1);
           }
           //Going right
-          else if(key == 39 && snake.direction != 'left')
+          else if(key == 39 && snake.direction != 'left' && !proccesing)
           {
-            snake.direction = 'right';
+            //snake.direction = 'right';
+            setTimeout(function(){console.log('right');snake.direction = 'right';}, 1);
           }
           //Going down
-          else if(key == 40 && snake.direction != 'up')
+          else if(key == 40 && snake.direction != 'up' && !proccesing)
           {
-            snake.direction = 'down';
+            //snake.direction = 'down';
+            setTimeout(function(){console.log('down');snake.direction = 'down';}, 1);
           }
       });
 
-      var anim = new Kinetic.Animation(function(frame) {
+      anim = new Kinetic.Animation(function(frame) {
 
-         wait(time_update_game, frame.time, function(){
+        //  wait(time_update_game, frame.time, function(){
             
-            snake.update();
-        });
+        //     snake.update();
+        // });
+
+         snake.update();
 
 
       }, layers['game']);
@@ -266,31 +263,78 @@ jQuery(document).ready(function(){
 
       });
 
-      anim.start();
+      document.getElementById('retry').onclick = function(){
+          startGame();
+          return false;
+      };
 
-      snake.anim = anim;
+      stage.add(layers['game']);
+    }
+
+    function startGame()
+    {
+      document.getElementById('gameover').style.display='none';
+
+      if(!snake)
+      {
+        snake = new Player();
+      }
+      // var border = new Kinetic.Rect({
+      // width: layers['game'].getWidth(),
+      // height: layers['game'].getHeight(),
+      // stroke: 'black',
+      // strokeWidth: 1, //Border Size in Pixels
+      // fill: 'transparent' //Background Color
+      // });
+      // layers['game'].add(border);
+      
+      layers['game'].destroyChildren();
+      layers['game'].add(snake.head);
+      layers['game'].add(snake.food);
+
+      // stage.on('mousemove.game', function(data){
+
+      //     snake.targetPos.x = data.evt.clientX;
+      //     snake.targetPos.y = data.evt.clientY;
+      // });
+      
+      layers['game'].getCanvas()._canvas.focus();
+
+      anim.start();
+      
     }
     
     function Player()
     {
-      this.head = new Kinetic.Circle({x:SIZE, y:SIZE, radius: SIZE, fill:'black', stroke: 'rgb(191, 191, 191)', strokeWidth: 1})
-      this.actor = [];
-      this.food = new Kinetic.Circle({x: layers['game'].getWidth()/2-SIZE, y: layers['game'].getHeight()/2-SIZE, radius: SIZE, fill:'green', stroke: 'rgb(191, 191, 191)', strokeWidth: 1});
-
       this.direction = 'right';
-      this.sprint = SIZE*2;
+      this.sprint = SIZE;
       this.score = 0;
       this.running = true;
+      this._speed = 1.4;
+      this.speed = this._speed;
+
+      this.head = new Kinetic.Image({x: 0, y: 0, width: this.sprint, height: this.sprint, image:assets_queue.getResult('snake_head')});
+      this.actor = [];
+      this.food = new Kinetic.Image({x: layers['game'].getWidth()/2, y: layers['game'].getHeight()/2, width: this.sprint, height: this.sprint, image:assets_queue.getResult('snake_body')});
 
       this.max_w = (layers['game'].getWidth() % 2 == 0 ? layers['game'].getWidth()-1: layers['game'].getWidth())/this.sprint;
       this.max_h=(layers['game'].getHeight() % 2 == 0 ? layers['game'].getHeight()-1: layers['game'].getHeight())/this.sprint;
 
       this.update = function()
       {
+        
         if(!this.running)
         {
           return;
         }
+
+        if(this.speed>0)
+        {
+          this.speed-=0.3;
+          return
+        }
+
+        this.speed = this._speed;
 
         //Collipsion
         var x = x2 = this.head.x();
@@ -322,7 +366,7 @@ jQuery(document).ready(function(){
         }
 
         //Wall Collision
-        if(x2 < 0 || x2*scaleX>window.innerWidth || y2 < 0 || y2*scaleY>window.innerHeight)
+        if(x2 < 0 || x2>layers['game'].getWidth()-SIZE || y2 < 0 || y2>layers['game'].getHeight()-SIZE)
         {
           return this.game_over();
         }
@@ -336,6 +380,7 @@ jQuery(document).ready(function(){
           {
             if(x2==this.actor[i].x() && y2==this.actor[i].y())
             {
+              console.log('snake collision', this.direction);
               return this.game_over();
             }
           }
@@ -356,18 +401,22 @@ jQuery(document).ready(function(){
         {
           
           //Music
-          assets_queue.getResult('audio_food').pause();
-          assets_queue.getResult('audio_food').currentTime = 0;
-          assets_queue.getResult('audio_food').play();
+          assets_queue.getResult('zuri_sound').pause();
+          assets_queue.getResult('zuri_sound').currentTime = 0;
+          assets_queue.getResult('zuri_sound').play();
 
-          var new_actor = new Kinetic.Circle({x: x, y: y, radius: SIZE, fill:'red', stroke: 'rgb(191, 191, 191)', strokeWidth: 1});
+          var new_actor = new Kinetic.Image({x: x, y: y, width: this.sprint, height: this.sprint, image:assets_queue.getResult('zuri_pic')});
 
           this.actor.push(new_actor);
 
           layers['game'].add(new_actor);
 
-          if(time_update_game>5)
-            time_update_game -= 0.5
+          if(this._speed>0)
+          {
+            this._speed -=0.001
+          }
+          // if(time_update_game>5)
+          //   time_update_game -= 0.5
 
           //Points
           this.score += 10;
@@ -393,8 +442,8 @@ jQuery(document).ready(function(){
       this.calculate_food_position = function()
       {
          
-          var x = SIZE*(2*(1 + parseInt(Math.random()*this.max_w))-1);
-          var y = SIZE*(2*(1 + parseInt(Math.random()*this.max_h))-1);
+          var x = SIZE*parseInt(Math.random()*this.max_w);
+          var y = SIZE*parseInt(Math.random()*this.max_h);
 
           for(var i=0; i<this.actor.length; i++)
             {
@@ -411,13 +460,16 @@ jQuery(document).ready(function(){
       {
         this.running = false;
         
-        this.anim.stop();
+        anim.stop();
+        assets_queue.getResult('audio_gameover').pause();
+        assets_queue.getResult('audio_gameover').currentTime = 0;
         assets_queue.getResult('audio_gameover').play();
         document.getElementById('gameover').style.display='block';
         document.getElementById('score').innerHTML='SCORE: '+this.score;
+
+        snake = null;
         // assets_queue.getResult('audio_main').pause();
-        // assets_queue.getResult('audio_gameover').pause();
-        // assets_queue.getResult('audio_gameover').currentTime = 0;
+
       }
 
     };

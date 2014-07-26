@@ -21,7 +21,7 @@ body {padding: 0; margin: 0; overflow: hidden;}
   height:64;
 }
 
-#loading p, #score
+#loading p, #score, #retry
 {
   position: relative;  
   font: 32px "Press Start 2P", cursive;
@@ -53,6 +53,12 @@ body {padding: 0; margin: 0; overflow: hidden;}
   -webkit-box-shadow: 2px 2px 2px 0px rgba(0,0,0,0.35);
   -moz-box-shadow: 2px 2px 2px 0px rgba(0,0,0,0.35);
   box-shadow: 2px 2px 2px 0px rgba(0,0,0,0.35);
+}
+
+#retry
+{
+  cursor:pointer;
+  margin-top:20px;
 }
 
 .kineticjs-content
