@@ -29,7 +29,7 @@ jQuery(document).ready(function(){
     {'id':'ebury_logo', 'src':'./snake/images/ebury_logo.png'},
     {'id':'snake_body', 'src':'./snake/images/dollar.png'},
     {'id':'snake_head', 'src':'./snake/images/snake_head.png'},
-    {'id':'zuri_pic', 'src':'./snake/images/snake_head.png'},
+    {'id':'zuri_pic', 'src':'./snake/images/zuri_pic.png'},
 
     //Audios
     //{'id':'audio_main', 'src':'http://dl.dropbox.com/u/26141789/canvas/snake/main.ogg'},
@@ -204,34 +204,34 @@ jQuery(document).ready(function(){
 
           //SetTimeOut avoids cases as for instance going to left direction and pressing very quickly top and left, giving as a result a collision with the left part of the snake(basically going to the opposite way)
 
-          if(!snake)
+          if(!snake || snake.ndirection.length>3)
           {
             return;
           }
 
           //Going left
-          if(key == 37 && snake.direction != 'right' && !proccesing)
+          if(key == 37 && snake.direction != 'right')
           {
-            //snake.direction = 'left';
-            setTimeout(function(){console.log('left');snake.direction = 'left';}, 1);
+            snake.ndirection.push('left');
+            //setTimeout(function(){snake.direction.push('left');}, 1);
           }
           //Going up
-          else if(key == 38 && snake.direction != 'down' && !proccesing)
+          else if(key == 38 && snake.direction != 'down')
           {
-            //snake.direction = 'up';
-            setTimeout(function(){console.log('up');snake.direction = 'up';}, 1);
+            snake.ndirection.push('up');
+            //setTimeout(function(){snake.direction.push('up');}, 1);
           }
           //Going right
-          else if(key == 39 && snake.direction != 'left' && !proccesing)
+          else if(key == 39 && snake.direction != 'left')
           {
-            //snake.direction = 'right';
-            setTimeout(function(){console.log('right');snake.direction = 'right';}, 1);
+            snake.ndirection.push('right');
+            //setTimeout(function(){snake.direction.push('right');}, 1);
           }
           //Going down
-          else if(key == 40 && snake.direction != 'up' && !proccesing)
+          else if(key == 40 && snake.direction != 'up')
           {
-            //snake.direction = 'down';
-            setTimeout(function(){console.log('down');snake.direction = 'down';}, 1);
+            snake.ndirection.push('down');
+            //setTimeout(function(){snake.direction.push('down');}, 1);
           }
       });
 
@@ -307,6 +307,7 @@ jQuery(document).ready(function(){
     function Player()
     {
       this.direction = 'right';
+      this.ndirection = [];
       this.sprint = SIZE;
       this.score = 0;
       this.running = true;
@@ -315,7 +316,7 @@ jQuery(document).ready(function(){
 
       this.head = new Kinetic.Image({x: 0, y: 0, width: this.sprint, height: this.sprint, image:assets_queue.getResult('snake_head')});
       this.actor = [];
-      this.food = new Kinetic.Image({x: layers['game'].getWidth()/2, y: layers['game'].getHeight()/2, width: this.sprint, height: this.sprint, image:assets_queue.getResult('snake_body')});
+      this.food = new Kinetic.Image({x: layers['game'].getWidth()/2, y: layers['game'].getHeight()/2, width: this.sprint, height: this.sprint, image:assets_queue.getResult('zuri_pic')});
 
       this.max_w = (layers['game'].getWidth() % 2 == 0 ? layers['game'].getWidth()-1: layers['game'].getWidth())/this.sprint;
       this.max_h=(layers['game'].getHeight() % 2 == 0 ? layers['game'].getHeight()-1: layers['game'].getHeight())/this.sprint;
@@ -339,6 +340,11 @@ jQuery(document).ready(function(){
         //Collipsion
         var x = x2 = this.head.x();
         var y = y2 = this.head.y();
+
+        if(this.ndirection.length)
+        {
+          this.direction = this.ndirection.shift();
+        }
 
         if(this.direction == 'right')
         {
@@ -405,7 +411,7 @@ jQuery(document).ready(function(){
           assets_queue.getResult('zuri_sound').currentTime = 0;
           assets_queue.getResult('zuri_sound').play();
 
-          var new_actor = new Kinetic.Image({x: x, y: y, width: this.sprint, height: this.sprint, image:assets_queue.getResult('zuri_pic')});
+          var new_actor = new Kinetic.Image({x: x, y: y, width: this.sprint, height: this.sprint, image:assets_queue.getResult('snake_body')});
 
           this.actor.push(new_actor);
 
