@@ -4,6 +4,6 @@
   "dependencies": {
     "kineticjs": "latest",
     "PreloadJS": "latest",
-    "jquery":"latest"
+    "requirejs":"latest"
   }
 }
