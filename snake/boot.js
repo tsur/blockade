@@ -1,5 +1,5 @@
 require.config({
-    
+
   paths: {
 
     'kinetic': '../vendors/kineticjs/kinetic.min',
@@ -9,14 +9,13 @@ require.config({
   shim: {},
 
   //allow cross-domain requests for text plugin as long as remote server allows CORS
-  config: 
-  {
-      text: 
-      {
-        useXhr: function (url, protocol, hostname, port){return true;}
+  config: {
+    text: {
+      useXhr: function(url, protocol, hostname, port) {
+        return true;
       }
+    }
   },
 
   deps: ['./js/app']
 });
-
