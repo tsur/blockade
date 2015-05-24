@@ -1,4 +1,4 @@
-ebury-games
+Snake
 ===========
 
-Small &amp; Funny Canvas Games
+The Classical Snake Game
