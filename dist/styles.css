@@ -1,0 +1,86 @@
+@import url("http://fonts.googleapis.com/css?family=Press+Start+2P");
+
+body {
+
+  padding: 0; 
+  margin: 0; 
+  overflow: hidden;
+  width:100%;
+  height:100%;
+  background-color: #3A3536;
+
+}
+
+.hidden {
+
+  display:none;
+
+}
+
+section {
+
+  background-color: #242424;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  padding: 0; 
+  margin: 0;
+  
+}
+
+main {
+
+  position:absolute;
+  top: 50%;
+  left:50%;
+  background-color: #000000;
+  background-color: rgba(0,0,0,0.5);
+  width: 250px;
+  height: 120px;
+  margin-top:-60px;
+  margin-left:-125px;
+  padding: 20px;
+  border-radius: 30px;
+  display:  -webkit-box;
+  display:  -webkit-flex;
+  display:  -ms-flexbox;
+  display:  flex;
+  vertical-align: middle;
+
+}
+
+main p {
+
+  color: #42C155;
+  margin: auto;
+  font: 32px "Press Start 2P", cursive;
+
+}
+
+main .insert-coin {
+
+  font-size: 15px;
+
+  -webkit-animation-name: blinker;
+
+          animation-name: blinker;
+  -webkit-animation-duration: 1s;
+          animation-duration: 1s;
+  -webkit-animation-timing-function: linear;
+          animation-timing-function: linear;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+
+}
+
+@-webkit-keyframes blinker {  
+    0% { opacity: 1.0; }
+    50% { opacity: 0.0; }
+    100% { opacity: 1.0; }
+}
+
+@keyframes blinker {  
+    0% { opacity: 1.0; }
+    50% { opacity: 0.0; }
+    100% { opacity: 1.0; }
+}

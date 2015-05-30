@@ -3,23 +3,12 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
-  <title>Ebury Games</title>
-  <!-- <link rel="stylesheet" href="dist/css/bootstrap.min.css" /> -->
-  <link rel="stylesheet" href="snake/css/index.css" />
-  <script src="vendors/jquery/dist/jquery.min.js"></script>
-  <script src="vendors/kineticjs/kinetic.min.js"></script>
-  <script src="vendors/PreloadJS/lib/preloadjs-0.4.1.min.js"></script>
+  <title>Blockade</title>
+  <link rel="stylesheet" type="text/css" href="dist/styles.css">
 </head>
 <body>
-  <section id="loading">
-    <img src="dist/images/loading-bars.svg"/>
-    <p>Loading ...</p>
-  </section>
-  <section id="gameover">
-    <p id="score"></p>
-    <p id="retry">Retry Again</p>
-  </section>
-  <section id="game"></section>
-  <script data-main="snake/boot.js" src="vendors/requirejs/require.js"></script>
+  <section><canvas></canvas></section>
+  <main class="hidden"><p>GAME OVER</p><p class="insert-coin">Press Enter</p></main>
+  <script src="dist/bundle.js"></script>
 </body>
 </html>
