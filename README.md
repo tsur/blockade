@@ -14,6 +14,12 @@ Open your browser on localhost:8080 to start developing. You may now modify the 
 
 ** NOTE: You will need LiveReload Plugin from chrome-store to enable live reloading
 
+To deploy it remotely, make sure you commit and/or push all your changes to the develop branch. Once your done, just run:
+
+```bash
+npm run deploy:remote
+```
+
 # Testing
 
 ```bash
