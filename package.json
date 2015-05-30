@@ -2,7 +2,7 @@
   "name": "blockade",
   "author": "Zuri Pabon",
   "version": "0.0.1",
-  "description": "Blockade game",
+  "description": "Blockade Game",
   "main": "src/js/entry.js",
   "engines": {
     "node": "0.12.x",

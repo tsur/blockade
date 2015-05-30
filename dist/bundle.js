@@ -12255,6 +12255,81 @@ var _session = require('./session');
 
 var _session2 = _interopRequireDefault(_session);
 
+function initElements() {
+
+  _session2['default'].canvas = document.querySelector('canvas');
+  _session2['default'].canvasCtx = _session2['default'].canvas.getContext('2d');
+
+  var setCanvasSize = function setCanvasSize() {
+
+    _session2['default'].width = Math.floor(window.innerWidth / _session2['default'].cellSize) * _session2['default'].cellSize;
+    _session2['default'].height = Math.floor(window.innerHeight / _session2['default'].cellSize) * _session2['default'].cellSize;
+
+    _session2['default'].canvas.setAttribute('width', _session2['default'].width);
+    _session2['default'].canvas.setAttribute('height', _session2['default'].height);
+  };
+
+  setCanvasSize();
+
+  window.addEventListener('resize', function () {
+    return setCanvasSize();
+  });
+
+  //Lets add the keyboard controls now
+  document.addEventListener('keydown', function (e) {
+
+    var key = e.which;
+
+    //We will add another clause to prevent reverse gear
+    if (key == '37' && _session2['default'].direction != 'right') _session2['default'].direction = 'left';else if (key == '38' && _session2['default'].direction != 'session.directionown') _session2['default'].direction = 'up';else if (key == '39' && _session2['default'].direction != 'left') _session2['default'].direction = 'right';else if (key == '40' && _session2['default'].direction != 'up') _session2['default'].direction = 'down';
+    //The snake is now keyboard controllable
+  });
+
+  document.addEventListener('keyup', function (e) {
+
+    var key = e.which;
+
+    //We will add another clause to prevent reverse gear
+    if (key == '32') clearTimeout(_session2['default'].gameLoop);else if (key == '13') {
+
+      var menu = document.querySelector('main');
+
+      if (!_lodash2['default'].contains(menu.classList, 'hidden')) {
+
+        menu.classList.add('hidden');
+
+        initWorld(80);
+      }
+    };
+  });
+
+  window.addEventListener('keydown', function (e) {
+    switch (e.keyCode) {
+      case 37:
+      case 39:
+      case 38:
+      case 40: // Arrow keys
+      case 32:
+      case 13:
+        e.preventDefault();
+        break; // Space
+      default:
+        break; // do not block other keys
+    }
+  }, false);
+}
+
+function initWorld(speed) {
+
+  initSnake();
+
+  initFood();
+
+  _session2['default'].gameLoop = setTimeout(function () {
+    return drawGame();
+  }, _session2['default'].speed);
+}
+
 function initSnake() {
   var length = arguments[0] === undefined ? 5 : arguments[0];
 
@@ -12275,6 +12350,13 @@ function initFood() {
   _session2['default'].food = {
     x: Math.round(Math.random() * (_session2['default'].width - _session2['default'].cellSize) / _session2['default'].cellSize),
     y: Math.round(Math.random() * (_session2['default'].height - _session2['default'].cellSize) / _session2['default'].cellSize) };
+}
+
+function gameOver() {
+
+  clearTimeout(_session2['default'].gameLoop);
+
+  document.querySelector('main').classList.remove('hidden');
 }
 
 //Lets paint the snake now
@@ -12300,7 +12382,7 @@ function drawGame() {
   //This will restart the game if the snake hits the wall
   //Lets add the code for body collision
   //Now if the head of the snake bumps into its body, the game will restart
-  var isGameOver = nx == -1 || nx == _session2['default'].width / _session2['default'].cellSize || ny == -1 || ny == _session2['default'].height / _session2['default'].cellSize || checkCollision(nx, ny);
+  var isGameOver = nx == -1 || nx >= _session2['default'].width / _session2['default'].cellSize || ny == -1 || ny >= _session2['default'].height / _session2['default'].cellSize || checkCollision(nx, ny);
 
   if (isGameOver) {
 
@@ -12403,88 +12485,6 @@ function checkCollision(x, y) {
   }
 
   return false;
-}
-
-function initElements() {
-
-  _session2['default'].canvas = document.querySelector('canvas');
-  _session2['default'].canvasCtx = _session2['default'].canvas.getContext('2d');
-
-  _session2['default'].width = window.innerWidth;
-  _session2['default'].height = window.innerHeight;
-
-  _session2['default'].canvas.setAttribute('width', _session2['default'].width);
-  _session2['default'].canvas.setAttribute('height', _session2['default'].height);
-
-  window.addEventListener('resize', function () {
-
-    _session2['default'].width = window.innerWidth;
-    _session2['default'].height = window.innerHeight;
-
-    _session2['default'].canvas.setAttribute('width', _session2['default'].width);
-    _session2['default'].canvas.setAttribute('height', _session2['default'].height);
-  });
-
-  //Lets add the keyboard controls now
-  document.addEventListener('keydown', function (e) {
-
-    var key = e.which;
-
-    //We will add another clause to prevent reverse gear
-    if (key == '37' && _session2['default'].direction != 'right') _session2['default'].direction = 'left';else if (key == '38' && _session2['default'].direction != 'session.directionown') _session2['default'].direction = 'up';else if (key == '39' && _session2['default'].direction != 'left') _session2['default'].direction = 'right';else if (key == '40' && _session2['default'].direction != 'up') _session2['default'].direction = 'down';
-    //The snake is now keyboard controllable
-  });
-
-  document.addEventListener('keyup', function (e) {
-
-    var key = e.which;
-
-    //We will add another clause to prevent reverse gear
-    if (key == '32') clearTimeout(_session2['default'].gameLoop);else if (key == '13') {
-
-      var menu = document.querySelector('main');
-
-      if (!_lodash2['default'].contains(menu.classList, 'hidden')) {
-
-        menu.classList.add('hidden');
-
-        initWorld(80);
-      }
-    };
-  });
-
-  window.addEventListener('keydown', function (e) {
-    switch (e.keyCode) {
-      case 37:
-      case 39:
-      case 38:
-      case 40: // Arrow keys
-      case 32:
-      case 13:
-        e.preventDefault();
-        break; // Space
-      default:
-        break; // do not block other keys
-    }
-  }, false);
-}
-
-function initWorld(speed) {
-
-  initSnake();
-
-  initFood();
-
-  _session2['default'].gameLoop = setTimeout(function () {
-    return drawGame();
-  }, _session2['default'].speed);
-}
-
-function gameOver() {
-
-  clearTimeout(_session2['default'].gameLoop);
-
-  document.querySelector('main').classList.remove('hidden');
 }
 
 function init() {
