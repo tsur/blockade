@@ -90,6 +90,7 @@ function initSnake(length = 5) {
   session.snake = new Array();
   session.direction = 'right';
   session.score == 0;
+  session.speed = 80;
 
   _.forEachRight(_.range(length), (i) => session.snake.push({
     x: i,

@@ -12,7 +12,7 @@ session.canvasCtx = null;
 session.bgColor = '#42C155';
 session.snakeColor = '#3A3536';
 session.scoreIncrement = 10;
-session.speed = 85;
+session.speed = 80;
 
 export
 default session;

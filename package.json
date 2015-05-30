@@ -35,7 +35,6 @@
     "babelify": "^6.1.2",
     "browserify": "^10.2.3",
     "cssnext": "^1.5.2",
-    "jquery": "^2.1.4",
     "livereload": "^0.3.7",
     "lodash": "^3.9.3",
     "npm-watch": "0.0.0"
