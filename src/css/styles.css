@@ -2,12 +2,12 @@
 
 body {
 
-  padding: 0; 
+  padding: 40px; 
   margin: 0; 
   overflow: hidden;
   width:100%;
   height:100%;
-  background-color: #3A3536;
+  background-color: #42C155;
 
 }
 
@@ -19,10 +19,7 @@ body {
 
 section {
 
-  background-color: #242424;
-  width:100%;
-  height:100%;
-  overflow:hidden;
+  background-color: #42C155;
   padding: 0; 
   margin: 0;
   
@@ -53,9 +50,22 @@ main p {
 
 }
 
-main .insert-coin {
+main div {
 
+  display: flex;
+  flex-direction:column;
+  margin-top:25px;
+  width:190px;
+
+}
+
+main div p {
+
+  text-align:center;
   font-size: 15px;
+  margin:5px;
+  padding:0;
+  word-break: break-all;
 
   animation-name: blinker;
   animation-duration: 1s;

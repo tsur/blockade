@@ -8,11 +8,14 @@ function initElements() {
 
   const setCanvasSize = function() {
 
-    session.width = (Math.floor(window.innerWidth / session.cellSize) * session.cellSize);
-    session.height = (Math.floor(window.innerHeight / session.cellSize) * session.cellSize);
+    // 80 comes from padding
+    session.width = (Math.floor(window.innerWidth / session.cellSize) * session.cellSize) - 80;
+    session.height = (Math.floor(window.innerHeight / session.cellSize) * session.cellSize) - 80;
 
     session.canvas.setAttribute('width', session.width);
     session.canvas.setAttribute('height', session.height);
+
+    if (session.gameOver) drawGame();
 
   };
 
@@ -39,8 +42,25 @@ function initElements() {
     const key = e.which;
 
     //We will add another clause to prevent reverse gear
-    if (key == '32') clearTimeout(session.gameLoop);
-    else if (key == '13') {
+    if (key == '32') {
+
+      if (!session.paused) {
+
+        clearTimeout(session.gameLoop);
+        clearTimeout(session.colorLoop);
+
+        session.paused = true;
+
+      } else {
+
+        drawGame();
+        changeColor();
+        session.paused = false;
+
+      }
+
+
+    } else if (key == '13') {
 
       const menu = document.querySelector('main');
 
@@ -48,7 +68,9 @@ function initElements() {
 
         menu.classList.add('hidden');
 
-        initWorld(80);
+        session.gameOver = false;
+
+        initWorld(session.speed);
 
       }
 
@@ -83,13 +105,15 @@ function initWorld(speed) {
 
   session.gameLoop = setTimeout(() => drawGame(), session.speed);
 
+  session.colorLoop = setTimeout(() => changeColor(), session.changeColorSpeed);
+
 }
 
 function initSnake(length = 5) {
 
   session.snake = new Array();
   session.direction = 'right';
-  session.score == 0;
+  session.score = 0;
   session.speed = 80;
 
   _.forEachRight(_.range(length), (i) => session.snake.push({
@@ -111,8 +135,37 @@ function initFood() {
 function gameOver() {
 
   clearTimeout(session.gameLoop);
+  clearTimeout(session.colorLoop);
 
-  document.querySelector('main').classList.remove('hidden');
+  session.gameOver = true;
+
+  const gameOverDiv = document.querySelector('main');
+  const scoreParaghrap = document.querySelector('.score');
+  const gameOverParaghraps = document.querySelectorAll('main p');
+
+  for (let p of Array.from(gameOverParaghraps)) {
+
+    p.style.color = session.snakeColor;
+
+  }
+
+  scoreParaghrap.textContent = session.score;
+  gameOverDiv.classList.remove('hidden');
+
+}
+
+function changeColor() {
+
+  //Change snakeColor
+
+  // const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+  const randomColor = _.sample(session.bgRandomColors);
+
+  session.snakeColor = randomColor;
+  document.body.style.backgroundColor = session.snakeColor;
+  document.body.childNodes[1].style.backgroundColor = session.snakeColor;
+
+  session.colorLoop = setTimeout(() => changeColor(), session.changeColorSpeed);
 
 }
 
@@ -121,7 +174,7 @@ function drawGame() {
 
   //To avoid the snake trail we need to paint the BG on every frame
   //Lets paint the canvas now
-  session.canvasCtx.fillStyle = session.snakeColor;
+  session.canvasCtx.fillStyle = session.bgColor;
   session.canvasCtx.fillRect(0, 0, session.width, session.height);
 
   //The movement code for the snake to come here.
@@ -199,9 +252,9 @@ function drawGame() {
 //Lets first create a generic function to paint cells
 function drawCell(x, y) {
 
-  session.canvasCtx.fillStyle = session.bgColor;
+  session.canvasCtx.fillStyle = session.snakeColor;
   session.canvasCtx.fillRect(x * session.cellSize, y * session.cellSize, session.cellSize, session.cellSize);
-  session.canvasCtx.strokeStyle = session.snakeColor;
+  session.canvasCtx.strokeStyle = session.bgColor;
   session.canvasCtx.strokeRect(x * session.cellSize, y * session.cellSize, session.cellSize, session.cellSize);
 
 }
@@ -210,11 +263,11 @@ function drawElements() {
 
   _.forEach(session.snake, (body) => drawCell(body.x, body.y));
 
-  //Lets paint the food
+  // Draw the food
   drawCell(session.food.x, session.food.y);
 
-  //Lets paint the score
-  session.canvasCtx.fillText("Score: " + session.score, 5, session.height - 5);
+  // Draw the score
+  // session.canvasCtx.fillText("Score: " + session.score, 5, session.height - 5);
 
 }
 
