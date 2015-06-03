@@ -15,7 +15,7 @@
   "scripts": {
     "deploy:local": "npm install && npm run serve",
     "deploy:heroku": "git checkout master && git merge --no-ff develop -m 'Merged into develop' && git push origin master && git push heroku master && git checkout develop",
-    "deploy:ghpages": "git checkout -b gh-pages develop && git merge --no-ff develop -m 'Merged develop into gh-pages' && git push origin gh-pages && git checkout develop",
+    "deploy:gh-pages": "git checkout -b gh-pages develop && git merge --no-ff develop -m 'Merged develop into gh-pages' && git push origin gh-pages && git checkout develop",
     "build": "npm run build:js && npm run build:css",
     "build:js": "browserify --transform babelify --entry $npm_package_config_entry --outfile $npm_package_config_bundle",
     "build:css": "cssnext src/css/styles.css > dist/styles.css",
