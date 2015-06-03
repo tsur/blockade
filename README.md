@@ -17,10 +17,10 @@ Open your browser on localhost:8080 to start developing. You may now modify the 
 To deploy it remotely, make sure you commit and/or push all your changes to the develop branch. Once your done, just run either or both of:
 
 ```bash
-# Heroku app (you first need to create the heroku app)
+# Heroku app (first time you need to create the heroku app: heroku create)
 npm run deploy:heroku
-# Github Pages
-npm run deploy:ghpages
+# Github Pages (first time you need to create it: git checkout -b gh-pages develop)
+npm run deploy:gh-pages
 ```
 # Testing
 
