@@ -1,6 +1,8 @@
 let session = new Object();
 
 session.snake = new Array();
+session.snakeLength = 15;
+
 session.gameLoop = null;
 
 session.score = 0;

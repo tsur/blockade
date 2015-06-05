@@ -15890,7 +15890,7 @@ function initElements() {
 
       var menu = document.querySelector('main');
 
-      if (!_lodash2['default'].contains(menu.classList, 'hidden')) {
+      if (!menu.classList.contains('hidden')) {
 
         menu.classList.add('hidden');
 
@@ -15940,10 +15940,10 @@ function initSnake() {
   _session2['default'].score = 0;
   _session2['default'].speed = 80;
 
-  _lodash2['default'].forEachRight(_lodash2['default'].range(length), function (i) {
+  _lodash2['default'].forEachRight(_lodash2['default'].range(_session2['default'].snakeLength || length), function (i) {
     return _session2['default'].snake.push({
-      x: i,
-      y: 0
+      x: i + _session2['default'].cellSize,
+      y: _session2['default'].cellSize
     });
   });
 }
@@ -16090,8 +16090,8 @@ function drawCell(x, y) {
 
   _session2['default'].canvasCtx.fillStyle = _session2['default'].snakeColor;
   _session2['default'].canvasCtx.fillRect(x * _session2['default'].cellSize, y * _session2['default'].cellSize, _session2['default'].cellSize, _session2['default'].cellSize);
-  _session2['default'].canvasCtx.strokeStyle = _session2['default'].bgColor;
-  _session2['default'].canvasCtx.strokeRect(x * _session2['default'].cellSize, y * _session2['default'].cellSize, _session2['default'].cellSize, _session2['default'].cellSize);
+  // session.canvasCtx.strokeStyle = session.bgColor;
+  // session.canvasCtx.strokeRect(x * session.cellSize, y * session.cellSize, session.cellSize, session.cellSize);
 }
 
 function drawElements() {
@@ -16157,6 +16157,8 @@ Object.defineProperty(exports, '__esModule', {
 var session = new Object();
 
 session.snake = new Array();
+session.snakeLength = 15;
+
 session.gameLoop = null;
 
 session.score = 0;

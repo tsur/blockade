@@ -64,7 +64,7 @@ function initElements() {
 
       const menu = document.querySelector('main');
 
-      if (!_.contains(menu.classList, 'hidden')) {
+      if (!menu.classList.contains('hidden')) {
 
         menu.classList.add('hidden');
 
@@ -116,9 +116,9 @@ function initSnake(length = 5) {
   session.score = 0;
   session.speed = 80;
 
-  _.forEachRight(_.range(length), (i) => session.snake.push({
-    x: i,
-    y: 0
+  _.forEachRight(_.range(session.snakeLength || length), (i) => session.snake.push({
+    x: i + session.cellSize,
+    y: session.cellSize
   }));
 
 }
@@ -254,9 +254,8 @@ function drawCell(x, y) {
 
   session.canvasCtx.fillStyle = session.snakeColor;
   session.canvasCtx.fillRect(x * session.cellSize, y * session.cellSize, session.cellSize, session.cellSize);
-  session.canvasCtx.strokeStyle = session.bgColor;
-  session.canvasCtx.strokeRect(x * session.cellSize, y * session.cellSize, session.cellSize, session.cellSize);
-
+  // session.canvasCtx.strokeStyle = session.bgColor;
+  // session.canvasCtx.strokeRect(x * session.cellSize, y * session.cellSize, session.cellSize, session.cellSize);
 }
 
 function drawElements() {
