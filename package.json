@@ -21,8 +21,8 @@
     "build:peer": "npm run build:css && browserify --transform babelify --entry $npm_package_config_peer --outfile $npm_package_config_bundlePeer",
     "build:css": "cssnext src/css/styles.css > dist/styles.css",
     "start:heroku": "http-server ./",
-    "start": "npm run signaling",
-    "signaling": "signalhub listen -p 8000",
+    "start": "signalhub listen -p 443",
+    "signaling": "signalhub listen -p 443",
     "serve": "npm run watch & http-server ./ & livereload src",
     "watch": "npm-watch"
   },
@@ -36,10 +36,10 @@
   "license": "MIT",
   "dependencies": {
     "http-server": "^0.8.0",
-    "signalhub": "^4.1.0",
-    "webrtc-swarm": "^1.2.0"
+    "signalhub": "^4.1.0"
   },
   "devDependencies": {
+    "webrtc-swarm": "^1.2.0",
     "babelify": "^6.1.2",
     "browserify": "^10.2.3",
     "cssnext": "^1.5.2",
