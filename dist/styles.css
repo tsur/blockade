@@ -54,7 +54,7 @@ main p {
 
 }
 
-main div{
+main div {
 
   display: -webkit-box;
 
@@ -103,4 +103,43 @@ main div p {
     0% { opacity: 1.0; }
     50% { opacity: 0.0; }
     100% { opacity: 1.0; }
+}
+
+main.peer-menu {
+
+  width: 350px;
+  height: 250px;
+  margin-top:-125px;
+  margin-left:-175px;
+  text-align: center;
+  display: block;
+  background-color: #a7e5af;
+
+}
+
+main.peer-menu img {
+
+  width: 64px;
+  height: 64px;
+  margin: 0 10px;
+  cursor: pointer;
+
+}
+
+main.peer-menu section {
+
+  background-color: transparent;
+  
+}
+
+main.peer-menu section.up{
+
+  margin-top: 25px;
+
+}
+
+main.peer-menu section.horizontal img{
+
+  margin: 0 50px;
+  
 }

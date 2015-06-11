@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import session from './session';
+import rtc from './webrtc';
 
 function initElements() {
 
@@ -29,11 +30,10 @@ function initElements() {
     const key = e.which;
 
     //We will add another clause to prevent reverse gear
-    if (key == '37' && session.direction != 'right') session.direction = 'left';
-    else if (key == '38' && session.direction != 'session.directionown') session.direction = 'up';
-    else if (key == '39' && session.direction != 'left') session.direction = 'right';
-    else if (key == '40' && session.direction != 'up') session.direction = 'down';
-    //The snake is now keyboard controllable
+    if ((key == '37' || key == '65') && session.direction != 'right') session.direction = 'left';
+    else if ((key == '38' || key == '87') && session.direction != 'session.directionown') session.direction = 'up';
+    else if ((key == '39' || key == '68') && session.direction != 'left') session.direction = 'right';
+    else if ((key == '40' || key == '83') && session.direction != 'up') session.direction = 'down';
 
   });
 
@@ -64,7 +64,7 @@ function initElements() {
 
       const menu = document.querySelector('main');
 
-      if (!_.contains(menu.classList, 'hidden')) {
+      if (!menu.classList.contains('hidden')) {
 
         menu.classList.add('hidden');
 
@@ -116,9 +116,9 @@ function initSnake(length = 5) {
   session.score = 0;
   session.speed = 80;
 
-  _.forEachRight(_.range(length), (i) => session.snake.push({
-    x: i,
-    y: 0
+  _.forEachRight(_.range(session.snakeLength || length), (i) => session.snake.push({
+    x: i + session.cellSize,
+    y: session.cellSize
   }));
 
 }
@@ -254,9 +254,8 @@ function drawCell(x, y) {
 
   session.canvasCtx.fillStyle = session.snakeColor;
   session.canvasCtx.fillRect(x * session.cellSize, y * session.cellSize, session.cellSize, session.cellSize);
-  session.canvasCtx.strokeStyle = session.bgColor;
-  session.canvasCtx.strokeRect(x * session.cellSize, y * session.cellSize, session.cellSize, session.cellSize);
-
+  // session.canvasCtx.strokeStyle = session.bgColor;
+  // session.canvasCtx.strokeRect(x * session.cellSize, y * session.cellSize, session.cellSize, session.cellSize);
 }
 
 function drawElements() {
@@ -290,5 +289,7 @@ function init() {
   initElements();
 
   initWorld();
+
+  rtc();
 
 }
