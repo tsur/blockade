@@ -18,19 +18,26 @@
     "deploy:gh-pages": "git checkout gh-pages && git merge --no-ff develop -m 'Merged develop into gh-pages' && git push origin gh-pages && git checkout develop",
     "build": "npm run build:js && npm run build:css",
     "build:js": "browserify --transform babelify --entry $npm_package_config_entry --outfile $npm_package_config_bundle",
+    "build:peer": "npm run build:css && browserify --transform babelify --entry $npm_package_config_peer --outfile $npm_package_config_bundlePeer",
     "build:css": "cssnext src/css/styles.css > dist/styles.css",
-    "start": "http-server ./",
+    "start:heroku": "http-server ./",
+    "start": "npm run signaling",
+    "signaling": "signalhub listen -p 8000",
     "serve": "npm run watch & http-server ./ & livereload src",
     "watch": "npm-watch"
   },
   "config": {
     "entry": "src/js/entry.js",
-    "bundle": "dist/bundle.js"
+    "peer": "src/js/peer.js",
+    "bundle": "dist/bundle.js",
+    "bundlePeer": "dist/bundle-peer.js"
   },
   "repository": "https://github.com/Tsur/blockade.git",
   "license": "MIT",
   "dependencies": {
-    "http-server": "^0.8.0"
+    "http-server": "^0.8.0",
+    "signalhub": "^4.1.0",
+    "webrtc-swarm": "^1.2.0"
   },
   "devDependencies": {
     "babelify": "^6.1.2",

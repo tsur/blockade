@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import session from './session';
+import rtc from './webrtc';
 
 function initElements() {
 
@@ -29,11 +30,10 @@ function initElements() {
     const key = e.which;
 
     //We will add another clause to prevent reverse gear
-    if (key == '37' && session.direction != 'right') session.direction = 'left';
-    else if (key == '38' && session.direction != 'session.directionown') session.direction = 'up';
-    else if (key == '39' && session.direction != 'left') session.direction = 'right';
-    else if (key == '40' && session.direction != 'up') session.direction = 'down';
-    //The snake is now keyboard controllable
+    if ((key == '37' || key == '65') && session.direction != 'right') session.direction = 'left';
+    else if ((key == '38' || key == '87') && session.direction != 'session.directionown') session.direction = 'up';
+    else if ((key == '39' || key == '68') && session.direction != 'left') session.direction = 'right';
+    else if ((key == '40' || key == '83') && session.direction != 'up') session.direction = 'down';
 
   });
 
@@ -289,5 +289,7 @@ function init() {
   initElements();
 
   initWorld();
+
+  rtc();
 
 }
