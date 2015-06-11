@@ -8798,8 +8798,8 @@ session.snakeColor = '#42C155';
 session.bgColor = '#3A3536';
 session.bgRandomColors = ['#3A3536', 'transparent', '#7AA6E1', '#D64042', '#96BAD5', '#DADDC3', '#A26DA0', '#D50C14', '#FFD78E', '#F4DAF4', '#E7B646', '#979060', '#BF9F6D', '#FA04AF', '#BA6FB5', '#BA7AA6', '#778127', '#CFC5D7', '#458687', '#BCBDEB', '#DA5603', '#88E01B', '#FFB38A', '#D7179E', '#FC3A49'];
 
-session.signallingNamespace = 'blockade-ns1';
-session.signallingHub = ['http://localhost:8000'];
+session.signalingNamespace = 'blockade-ns2';
+session.signalingHub = ['https://blockade-tsur.herokuapp.com/'];
 
 exports['default'] = session;
 module.exports = exports['default'];
@@ -8830,9 +8830,9 @@ function init() {
 
   try {
 
-    var signalling = (0, _signalhub2['default'])(_session2['default'].signallingNamespace, _session2['default'].signallingHub);
+    var signaling = (0, _signalhub2['default'])(_session2['default'].signalingNamespace, _session2['default'].signalingHub);
 
-    var rtc = (0, _webrtcSwarm2['default'])(signalling);
+    var rtc = (0, _webrtcSwarm2['default'])(signaling);
 
     rtc.on('peer', function (peer, id) {
 
@@ -8851,7 +8851,7 @@ function init() {
     });
   } catch (error) {
 
-    console.error('Signalling not working', _session2['default'].signallingHub, error);
+    console.error('Signaling not working', _session2['default'].signalingHub, error);
   }
 }
 
