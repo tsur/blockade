@@ -36,10 +36,10 @@
   "license": "MIT",
   "dependencies": {
     "http-server": "^0.8.0",
-    "signalhub": "^4.1.0",
-    "webrtc-swarm": "^1.2.0"
+    "signalhub": "^4.1.0"
   },
   "devDependencies": {
+    "webrtc-swarm": "^1.2.0",
     "babelify": "^6.1.2",
     "browserify": "^10.2.3",
     "cssnext": "^1.5.2",
