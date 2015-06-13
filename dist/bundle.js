@@ -24495,6 +24495,51 @@ arguments[4][143][0].apply(exports,arguments)
 },{"dup":143}],167:[function(require,module,exports){
 arguments[4][144][0].apply(exports,arguments)
 },{"_process":101,"dup":144,"readable-stream/transform":165,"util":116,"xtend":166}],168:[function(require,module,exports){
+
+/**
+ * Module dependencies.
+ */
+
+var global = (function() { return this; })();
+
+/**
+ * WebSocket constructor.
+ */
+
+var WebSocket = global.WebSocket || global.MozWebSocket;
+
+/**
+ * Module exports.
+ */
+
+module.exports = WebSocket ? ws : null;
+
+/**
+ * WebSocket constructor.
+ *
+ * The third `opts` options object gets ignored in web browsers, since it's
+ * non-standard, and throws a TypeError if passed to the constructor.
+ * See: https://github.com/einaros/ws/issues/227
+ *
+ * @param {String} uri
+ * @param {Array} protocols (optional)
+ * @param {Object) opts (optional)
+ * @api public
+ */
+
+function ws(uri, protocols, opts) {
+  var instance;
+  if (protocols) {
+    instance = new WebSocket(uri, protocols);
+  } else {
+    instance = new WebSocket(uri);
+  }
+  return instance;
+}
+
+if (WebSocket) ws.prototype = WebSocket.prototype;
+
+},{}],169:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -24515,6 +24560,10 @@ var _session2 = _interopRequireDefault(_session);
 var _webrtc = require('./webrtc');
 
 var _webrtc2 = _interopRequireDefault(_webrtc);
+
+var _ws = require('./ws');
+
+var _ws2 = _interopRequireDefault(_ws);
 
 function initElements() {
 
@@ -24655,7 +24704,7 @@ function gameOver() {
     for (var _iterator = Array.from(gameOverParaghraps)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
       var p = _step.value;
 
-      p.style.color = _session2['default'].snakeColor;
+      if (_session2['default'].snakeColor != 'transparent') p.style.color = _session2['default'].snakeColor;
     }
   } catch (err) {
     _didIteratorError = true;
@@ -24826,12 +24875,14 @@ function init() {
 
   initWorld();
 
+  if (_session2['default'].ws) return (0, _ws2['default'])();
+
   (0, _webrtc2['default'])();
 }
 
 module.exports = exports['default'];
 
-},{"./session":169,"./webrtc":170,"lodash":117}],169:[function(require,module,exports){
+},{"./session":170,"./webrtc":171,"./ws":172,"lodash":117}],170:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -24862,12 +24913,16 @@ session.bgColor = '#3A3536';
 session.bgRandomColors = ['#3A3536', 'transparent', '#7AA6E1', '#D64042', '#96BAD5', '#DADDC3', '#A26DA0', '#D50C14', '#FFD78E', '#F4DAF4', '#E7B646', '#979060', '#BF9F6D', '#FA04AF', '#BA6FB5', '#BA7AA6', '#778127', '#CFC5D7', '#458687', '#BCBDEB', '#DA5603', '#88E01B', '#FFB38A', '#D7179E', '#FC3A49'];
 
 session.signalingNamespace = 'blockade-ns2';
-session.signalingHub = ['https://blockade-tsur.herokuapp.com/'];
+session.signalingHub = ['http://localhost:9000/signaling', 'https://blockade-tsur.herokuapp.com/signaling'];
+
+session.ws = "true";
+// session.wsLocation = 'ws://localhost:8080';
+session.wsLocation = 'wss://blockade-tsur.herokuapp.com';
 
 exports['default'] = session;
 module.exports = exports['default'];
 
-},{}],170:[function(require,module,exports){
+},{}],171:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -24917,7 +24972,71 @@ exports['default'] = function () {
 
 module.exports = exports['default'];
 
-},{"./session":169,"signalhub":118,"webrtc-swarm":145}],171:[function(require,module,exports){
+},{"./session":170,"signalhub":118,"webrtc-swarm":145}],172:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _ws = require('ws');
+
+var _ws2 = _interopRequireDefault(_ws);
+
+var _session = require('./session');
+
+var _session2 = _interopRequireDefault(_session);
+
+function connection() {
+
+  var ws = new _ws2['default'](_session2['default'].wsLocation);
+
+  ws.onmessage = function (event) {
+
+    if (event.data === 'up') return _session2['default'].direction = 'up';
+
+    if (event.data === 'down') return _session2['default'].direction = 'down';
+
+    if (event.data === 'left') return _session2['default'].direction = 'left';
+
+    if (event.data === 'right') return _session2['default'].direction = 'right';
+  };
+
+  ws.onopen = function () {
+    return ws.send('gameClient');
+  };
+
+  ws.onclose = function () {
+    return setTimeout(function () {
+      return connection();
+    }, 1000);
+  };
+
+  ws.onerror = function () {
+    return setTimeout(function () {
+      return connection();
+    }, 1000);
+  };
+
+  return ws;
+};
+
+exports['default'] = function () {
+
+  try {
+
+    connection();
+  } catch (error) {
+
+    console.error('WS not working', _session2['default'].ws, error);
+  }
+};
+
+module.exports = exports['default'];
+
+},{"./session":170,"ws":168}],173:[function(require,module,exports){
 // Babel polyfill to support all ES6 features
 "use strict";
 
@@ -24934,4 +25053,4 @@ window.onload = function () {
   return (0, _game2["default"])();
 };
 
-},{"./game":168,"babelify/polyfill.js":91}]},{},[171]);
+},{"./game":169,"babelify/polyfill.js":91}]},{},[173]);

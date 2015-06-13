@@ -25,8 +25,13 @@ session.bgRandomColors = ['#3A3536', 'transparent', '#7AA6E1', '#D64042', '#96BA
 session.signalingNamespace = 'blockade-ns2';
 session.signalingHub = [
 
-  'https://blockade-tsur.herokuapp.com/'
+  'http://localhost:9000/signaling',
+  'https://blockade-tsur.herokuapp.com/signaling'
 ];
+
+session.ws = process.env.WS;
+// session.wsLocation = 'ws://localhost:8080';
+session.wsLocation = 'wss://blockade-tsur.herokuapp.com';
 
 export
 default session;
