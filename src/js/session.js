@@ -30,6 +30,8 @@ session.signalingHub = [
 ];
 
 session.ws = process.env.WS;
+// session.wsLocation = 'ws://localhost:8080';
+session.wsLocation = 'wss://blockade-tsur.herokuapp.com';
 
 export
 default session;

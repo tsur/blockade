@@ -1,6 +1,6 @@
 # Blockade
 
-Inspired by the classical blockade game, thereafter known as snake game, developed and published by Gremlin Industries back in 1976 and written in ES6. You may also control it from another client by using WebRTC on those browser devices supporint it. A demo is available [here](http://tsur.github.io/blockade). You may also download the project in zip format, then extract it and open the index.html file located on dist folder.
+Inspired by the classical blockade game, thereafter known as snake game, developed and published by Gremlin Industries back in 1976 and written in ES6. A demo is available [here](http://tsur.github.io/blockade). You may also control it from another client by using WebRTC on those mobile devices supporting it [here](http://tsur.github.io/blockade/peer.html). You may also download the project in zip format, then extract it and open the index.html file located on dist folder.
 
 # Setting up
 

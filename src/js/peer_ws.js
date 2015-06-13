@@ -6,7 +6,7 @@ let connected = false;
 
 function connection() {
 
-  ws = new WebSocket(location.origin.replace(/^http/, 'ws'));
+  ws = new WebSocket(session.wsLocation);
 
   ws.onopen = () => connected = true;
 

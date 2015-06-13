@@ -170,6 +170,8 @@ session.signalingNamespace = 'blockade-ns2';
 session.signalingHub = ['http://localhost:9000/signaling', 'https://blockade-tsur.herokuapp.com/signaling'];
 
 session.ws = process.env.WS;
+// session.wsLocation = 'ws://localhost:8080';
+session.wsLocation = 'wss://blockade-tsur.herokuapp.com';
 
 exports['default'] = session;
 module.exports = exports['default'];
@@ -193,7 +195,7 @@ var connected = false;
 
 function connection() {
 
-  ws = new _ws2['default'](location.origin.replace(/^http/, 'ws'));
+  ws = new _ws2['default'](_session2['default'].wsLocation);
 
   ws.onopen = function () {
     return connected = true;
