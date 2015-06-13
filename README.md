@@ -22,6 +22,18 @@ npm run deploy:heroku
 # Github Pages (first time you need to create it: git checkout -b gh-pages develop)
 npm run deploy:gh-pages
 ```
+
+# Building
+
+```bash
+# for websockets support
+npm run ws
+# for webrtc support
+npm run webrtc
+```
+
+After then, set the start script on package.json to some of the following: start:ws or start:webrtc
+
 # Testing
 
 ```bash

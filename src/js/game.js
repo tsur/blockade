@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import session from './session';
 import rtc from './webrtc';
+import ws from './ws';
 
 function initElements() {
 
@@ -145,7 +146,7 @@ function gameOver() {
 
   for (let p of Array.from(gameOverParaghraps)) {
 
-    p.style.color = session.snakeColor;
+    if (session.snakeColor != 'transparent') p.style.color = session.snakeColor;
 
   }
 
@@ -289,6 +290,8 @@ function init() {
   initElements();
 
   initWorld();
+
+  if (session.ws) return ws();
 
   rtc();
 
