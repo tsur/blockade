@@ -2,6 +2,7 @@ import _ from 'lodash';
 import session from './session';
 import rtc from './webrtc';
 import ws from './ws';
+import voiceRecognition from './voice';
 
 function initElements() {
 
@@ -290,6 +291,8 @@ function init() {
   initElements();
 
   initWorld();
+
+  voiceRecognition();
 
   if (session.ws) return ws();
 

@@ -2,6 +2,8 @@
 
 Inspired by the classical blockade game, thereafter known as snake game, developed and published by Gremlin Industries back in 1976 and written in ES6. A demo is available [here](http://tsur.github.io/blockade). You may also control it from another client by using WebRTC on those mobile devices supporting it [here](http://tsur.github.io/blockade/peer.html). You may also download the project in zip format, then extract it and open the index.html file located on dist folder.
 
+If running it on webkit based browsers, it also supports webkitSpeechRecognition which will allow you to control the game actions by using your device microphone, words recognised include "up, down, left and right". It's not working fine though. 
+
 # Setting up
 
 To deploy it on your local machine, just follow the steps below:

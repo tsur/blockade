@@ -24565,6 +24565,10 @@ var _ws = require('./ws');
 
 var _ws2 = _interopRequireDefault(_ws);
 
+var _voice = require('./voice');
+
+var _voice2 = _interopRequireDefault(_voice);
+
 function initElements() {
 
   _session2['default'].canvas = document.querySelector('canvas');
@@ -24875,6 +24879,8 @@ function init() {
 
   initWorld();
 
+  (0, _voice2['default'])();
+
   if (_session2['default'].ws) return (0, _ws2['default'])();
 
   (0, _webrtc2['default'])();
@@ -24882,7 +24888,7 @@ function init() {
 
 module.exports = exports['default'];
 
-},{"./session":170,"./webrtc":171,"./ws":172,"lodash":117}],170:[function(require,module,exports){
+},{"./session":170,"./voice":171,"./webrtc":172,"./ws":173,"lodash":117}],170:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -24923,6 +24929,83 @@ exports['default'] = session;
 module.exports = exports['default'];
 
 },{}],171:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _session = require('./session');
+
+var _session2 = _interopRequireDefault(_session);
+
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+exports['default'] = function () {
+
+  try {
+
+    if (typeof webkitSpeechRecognition !== 'undefined') {
+      (function () {
+
+        var recognition = new webkitSpeechRecognition();
+
+        var takeAction = function takeAction(voice) {
+
+          // console.log(voice.transcript, voice.confidence);
+          var movement = _lodash2['default'].last(voice.transcript.split(' '));
+
+          if (movement.indexOf('p') > -1) {
+
+            return _session2['default'].direction = 'up';
+          }
+
+          if (movement.indexOf('d') > -1) {
+
+            return _session2['default'].direction = 'down';
+          }
+
+          if (movement.indexOf('l') > -1) {
+
+            return _session2['default'].direction = 'left';
+          }
+
+          if (movement.indexOf('r') > -1) {
+
+            return _session2['default'].direction = 'right';
+          }
+        };
+
+        recognition.continuous = true;
+        recognition.interimResults = true;
+
+        recognition.onresult = function (event) {
+
+          var results = event.results;
+
+          _lodash2['default'].forEach(results, function (voices) {
+            return _lodash2['default'].forEach(voices, function (voice) {
+              return takeAction(voice);
+            });
+          });
+        };
+
+        recognition.start();
+      })();
+    }
+  } catch (error) {
+
+    console.error('Voice recognition not working', error);
+  }
+};
+
+module.exports = exports['default'];
+
+},{"./session":170,"lodash":117}],172:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -24972,7 +25055,7 @@ exports['default'] = function () {
 
 module.exports = exports['default'];
 
-},{"./session":170,"signalhub":118,"webrtc-swarm":145}],172:[function(require,module,exports){
+},{"./session":170,"signalhub":118,"webrtc-swarm":145}],173:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -25036,7 +25119,7 @@ exports['default'] = function () {
 
 module.exports = exports['default'];
 
-},{"./session":170,"ws":168}],173:[function(require,module,exports){
+},{"./session":170,"ws":168}],174:[function(require,module,exports){
 // Babel polyfill to support all ES6 features
 "use strict";
 
@@ -25053,4 +25136,4 @@ window.onload = function () {
   return (0, _game2["default"])();
 };
 
-},{"./game":169,"babelify/polyfill.js":91}]},{},[173]);
+},{"./game":169,"babelify/polyfill.js":91}]},{},[174]);
